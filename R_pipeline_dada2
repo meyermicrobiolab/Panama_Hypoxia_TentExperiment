@@ -1,0 +1,225 @@
+
+library(devtools)
+library(dada2)
+library(ShortRead)
+library(ggplot2)
+library(ggh4x)
+library(phyloseq)
+library(vegan)
+library (permute)
+library (lattice)
+library(knitr)
+library(ALDEx2)
+library(CoDaSeq)
+library(zCompositions)
+library(igraph)
+library(car)
+library(grDevices)
+library(cowplot)
+library(randomcoloR)
+library(dplyr)
+library(reshape2)
+library(tibble)
+library(exactRankTests)
+library(nlme)
+library(data.table)
+library(Rmisc)
+library(plyr)
+library(reshape2)
+library(vegan)
+library(readxl)
+library(ape)
+library(gridExtra)
+library(knitr)
+library(tidyverse)
+library(scales)
+library(grid)
+library(reshape2)
+library(microbiome)
+library(ggpubr)
+library(RColorBrewer)
+library(microbiomeutilities)
+library(viridis)
+library(tibble)
+writeLines(capture.output(sessionInfo()), "sessionInfo.txt")
+
+path <- "C:\\Users\\Elena\\Desktop\\Hypoxia UF\\Tent_Expm\\R_pipeline"
+list.files(path)
+
+# Forward and reverse fastq filenames have format: SAMPLENAME_R1_001.fastq and SAMPLENAME_R2_001.fastq
+fnFs <- sort(list.files(path, pattern="_R1_cut.fastq", full.names = TRUE))
+fnRs <- sort(list.files(path, pattern="_R2_cut.fastq", full.names = TRUE))
+
+# Extract sample names, assuming filenames have format: SAMPLENAME_XXX.fastq
+sample.names <- sapply(strsplit(basename(fnFs), "_"), `[`, 1)
+
+plotQualityProfile(fnFs[1:2])
+plotQualityProfile(fnRs[1:2])
+
+# Perform filtering and trimming
+# Assign the filenames for the filtered fastq.gz files.
+# Make directory and filenames for the filtered fastqs
+filt_path <- file.path(path, "filtered") # Place filtered files in filtered/ subdirectory
+filtFs <- file.path(filt_path, paste0(sample.names, "_F_filt.fastq.gz"))
+filtRs <- file.path(filt_path, paste0(sample.names, "_R_filt.fastq.gz"))
+
+# Filter the forward and reverse reads
+out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(150,150),
+                     maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
+                     compress=TRUE, multithread=FALSE) # On Windows set multithread=FALSE
+head(out)
+
+# Learn the Error Rates, it TAKES TIME!
+errF <- learnErrors(filtFs, multithread=TRUE)
+errR <- learnErrors(filtRs, multithread=TRUE)
+plotErrors(errF, nominalQ=TRUE)
+
+# Sample Inference
+dadaFs <- dada(filtFs, err=errF, multithread=TRUE)
+dadaRs <- dada(filtRs, err=errR, multithread=TRUE)           
+
+# Dereplicate the filtered fastq files
+derepFs <- derepFastq(filtFs, verbose=TRUE)
+derepRs <- derepFastq(filtRs, verbose=TRUE)
+names(derepFs) <- sample.names
+names(derepRs) <- sample.names
+
+# Infer the sequence variants in each sample
+dadaFs <- dada(derepFs, err=errF, multithread=TRUE)
+dadaRs <- dada(derepRs, err=errR, multithread=TRUE)
+
+# Inspecting the dada-class object returned by dada:
+dadaFs[[1]]
+
+# Merge the denoised forward and reverse reads:
+mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose=TRUE)
+
+# Inspect the merger data.frame from the first sample
+head(mergers[[1]])
+
+# Construct sequence table
+seqtab <- makeSequenceTable(mergers)
+dim(seqtab)
+
+# Inspect distribution of sequence lengths
+table(nchar(getSequences(seqtab)))
+
+# Remove Chimeras
+seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
+dim(seqtab.nochim)
+sum(seqtab.nochim)/sum(seqtab)
+
+# As a final check of our progress, we’ll look at the number of reads that made it through each step in the pipeline
+getN <- function(x) sum(getUniques(x))
+track <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, getN), rowSums(seqtab.nochim))
+colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
+rownames(track) <- sample.names
+head(track)
+write.table(track, "dada_read_statsTent.txt",sep="\t",col.names=NA) #Esta tabla la baja en Documents!!
+
+# Assign taxonomy
+# Make sure the appropriate database is available in the DADA2 directory
+taxa <- assignTaxonomy(seqtab.nochim,"C:\\Users\\Elena\\Desktop\\Hypoxia UF\\silva_nr99_v138.1_train_set.fa.gz", multithread=TRUE)
+
+# FIX the NAs in the taxa table
+taxon <- as.data.frame(taxa,stringsAsFactors=FALSE)
+taxon$Phylum[is.na(taxon$Phylum)] <- taxon$Kingdom[is.na(taxon$Phylum)]
+taxon$Class[is.na(taxon$Class)] <- taxon$Phylum[is.na(taxon$Class)]
+taxon$Order[is.na(taxon$Order)] <- taxon$Class[is.na(taxon$Order)]
+taxon$Family[is.na(taxon$Family)] <- taxon$Order[is.na(taxon$Family)]
+taxon$Genus[is.na(taxon$Genus)] <- taxon$Family[is.na(taxon$Genus)]
+write.table(taxon,"Tent_Expm_silva_taxa_table.txt",sep="\t",col.names=NA)
+write.table(seqtab.nochim, "Tent_Expm_silva_otu_table.txt",sep="\t",col.names=NA)
+
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install(version = "3.17")
+
+if (!requireNamespace("BiocManager"))
+  install.packages("BiocManager")
+BiocManager::install("phyloseq")
+
+# Create phyloseq object from otu and taxonomy tables from dada2, along with the sample metadata.
+otu <- read.table("Tent_Expm_silva_otu_table.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("Tent_Expm_silva_taxa_table.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("Tent_Expm_Metadata.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+               sample_data(samples), 
+               tax_table(taxon))
+ps
+
+# remove chloroplasts and mitochondria and Eukaryota
+get_taxa_unique(ps, "Family")
+get_taxa_unique(ps, "Order") 
+get_taxa_unique(ps, "Kingdom")
+ps <- subset_taxa(ps, Family !="Mitochondria")
+ps <- subset_taxa(ps, Order !="Chloroplast")
+ps <- subset_taxa(ps, Kingdom !="Eukaryota")
+ps <- subset_taxa(ps, Kingdom !="NA")
+get_taxa_unique(ps, "Family")
+get_taxa_unique(ps, "Order")
+get_taxa_unique(ps, "Kingdom")
+ps
+
+# filtered taxa with phyloseq, now export cleaned otu and taxa tables from phyloseq
+otu = as(otu_table(ps), "matrix")
+taxon = as(tax_table(ps), "matrix")
+metadata = as(sample_data(ps), "matrix")
+write.table(otu,"Tent_Expm_silva_nochloronomito_otu_table.txt",sep="\t",col.names=NA)
+write.table(taxon,"Tent_Expm_silva_nochloronomito_taxa_table.txt",sep="\t",col.names=NA)
+write.table(metadata,"Tent_Expm_silva_metadata.txt",sep="\t",col.names=NA)
+# remove control samples for plotting
+ps = subset_samples(ps, Site != "BLANK") ##! is how you exclude a sample
+ps
+
+
+
+## Load text files
+setwd("C:/Users/Elena/Desktop/Hypoxia UF/Tent_Expm/R_pipeline")
+
+read.table(file, header = FALSE, sep = "", dec = ".")
+otu <- read.delim('Tent_Expm_silva_nochloronomito_otu_table.txt')
+
+
+
+# rarefaction curves
+
+OTU = otu_table(otu, taxa_are_rows = TRUE)
+TAX = tax_table(taxon)
+samples = sample_data(samples)
+phca <- phyloseq(OTU, TAX, samples)
+phca
+tab <- otu_table(phca)
+class(tab) <- "matrix" 
+tab <- t(tab) # transpose observations to rows
+rare <- rarecurve(tab, step=400, lwd=2, ylab="OTU",  label=F)
+
+OTU = otu_table(otu, taxa_are_rows = TRUE)
+TAX = tax_table(tax)
+samples = sample_data(samples)
+phca <- phyloseq(OTU, TAX, samples)
+phca
+
+tab <- otu_table(phca)
+class(tab) <- "matrix" 
+tab <- t(tab) # transpose observations to rows
+rare <- rarecurve(tab, step=400, lwd=2, ylab="OTU",  label=F)
+
+rarecurve(t(otu_table(ps)), step=50, cex=0.5)
+
+
+# plot number of observed ASVs in coral samples
+plot_richness(ps,x="Species",color="Tent.treatment",measures=c("Observed"))
+# look at data and chose filtering method for very low abundance ASVs
+ntaxa(ps) #11845
+ps1<-filter_taxa(ps, function(x) mean(x) >1, TRUE) ##filtering out taxa that average out less than one over all samples. I have filtererd out singletons. 
+ntaxa(ps1) #1145
+plot_richness(ps1,x="Tent.treatment",color="Species",measures=c("Observed"))
+plot_richness(ps1,x="Expm.status",color="Species",measures=c("Observed"))
+plot_richness(ps1,x="Expm.status",color="Species",measures=c("Chao1"))
+plot_richness(ps1,x="Expm.status",color="Species",measures=c("Shannon"))
+
