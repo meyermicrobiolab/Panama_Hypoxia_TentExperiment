@@ -1,0 +1,625 @@
+########################### phyloseq ################################
+## By Elena Quintanilla
+
+## here you can find a good tutorial
+# https://joey711.github.io/phyloseq/import-data.html
+
+#Install phyloseq
+
+# if(!requireNamespace("BiocManager")){
+#   install.packages("BiocManager")
+# }
+# BiocManager::install("phyloseq")
+
+
+# Load libraries
+library(corncob)
+library(readr)
+library(tidyverse)
+library(nlme)
+library(compositions)
+library(tidyr)
+library(dplyr)
+library(data.table)
+library(phyloseq)
+library(vegan)
+library(ape)
+library(devtools)
+#install_github("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
+library(pairwiseAdonis)
+library(BiocManager)
+#BiocManager::install("microbiome")
+#devtools::install_github("microsud/microbiomeutilities")
+library(microbiomeutilities)
+library(RColorBrewer)
+## Load csv files
+
+# Set directory
+#path <- "C:\\Users\\Elena\\Desktop\\Hypoxia UF\\Tent_Expm\\R_pipeline\\phyloseq"
+# list.files(path)
+
+ setwd("C:/Users/Elena/Desktop/Hypoxia UF/Tent_Expm/R_pipeline/phyloseq")
+# Please save files in csv format. You can do it from Excel
+
+###############  Subset input data ###############
+
+
+## Define what subdata you want according to species (sp), 
+## Tent.treatment (tent) and Expm.status (expm)
+sp = c('Aten') # 'SSid','Aten'
+tent = c('P') # 'FT' 'P' 'O'
+expm = c('Bef','Aft','Rec') # 'Bef','Aft','Rec'
+
+# meta contains the meta data information for samples. 
+meta <- read.csv("Tent_Expm_silva_metadata.csv",
+                 header = TRUE, sep = ",")
+
+
+# Create a subset for Aten from meta
+
+table(meta$Tent.treatment) # see observation by variable (Tent.treatment)
+table(meta$Expm.status)
+meta_select <- meta %>% filter (Species %in% sp)  %>%
+                      filter (Tent.treatment %in% tent ) %>%
+                      filter (Expm.status %in% expm)
+
+
+# Use the meta data only for the choosen variables, 
+# to remove samples from other non choosen variables
+vector_samples <- c("Seq",meta_select$Sample)
+
+# Make sure you have transposed matrix to have seq in rows. 
+# You can do it directly in Excel
+otu <- read.csv("Tent_Expm_silva_nochloronomito_otu_table_transpose.csv",
+                header = TRUE, sep = ",")
+names(otu)
+## create vector to be used to subsample otu
+## In other words, removing no wanted columns
+samples_select <- otu %>% select (dput(as.character(vector_samples)))
+
+
+# remove otus that sum zero (through rows)
+otu_samples_select <- samples_select %>% 
+# keep only otus for the wanted variables 
+  mutate(sum_otus = rowSums(across(where(is.numeric)))) %>%
+             filter(sum_otus != 0) 
+# Number of rows for choosen variables
+nrow(otu_samples_select)
+
+# save file like csv instead of txt. Easier if do it in Excel
+taxa <- read.csv("Tent_Expm_silva_nochloronomito_taxa_table.csv",
+                 header = TRUE, sep = ",")
+
+## It is a good practice to take at look of the basic structure of the files.
+## We need to put each file as it is called by phyloseq
+
+## check column names
+names(meta)
+names(otu)
+names(taxa)
+
+## First remove sequences that are not related to a given sp: Aten
+vector_seq <- otu_samples_select$Seq
+
+taxa_select <- taxa %>% filter (Seq %in% dput(as.character(vector_seq)))
+
+# check number of otus is exactly same as number of seq
+nrow(otu_samples_select) # number otus in otu object
+nrow(taxa_select) # number of sequences in taxa object
+
+names (taxa_select) ## Seq and taxonomy
+
+################ Create phyloseq object ####################
+
+# phyloseq asks for a column 'X.SampleID' and the name of the files also labels sample ID
+# we create the object 'sample'
+sample_phyloseq <- meta_select %>% mutate(X.SampleID = Sample) %>% # create a new column 'X.SampleID' with
+  # same information than 'sample' column
+  column_to_rownames(var = "Sample") # move column sample to rows name
+# check new object 'sample'
+head(sample_phyloseq)
+
+## Now we work with the 'taxa' file to prepare it as asked by phyloseq
+## This file includes the sequence (Seq) by otu and taxonomic information from Kindom to Genus 
+names(taxa_select)
+
+# we would want to create a new column merging Family and Genus
+taxa1 <- taxa_select %>% unite(Family_Genus, Family, Genus, sep = "_", remove = FALSE) %>%
+# create ID column
+  mutate(ID = paste('OTU',row_number(),sep="_")) %>% 
+# and then, use it as row names
+  column_to_rownames(var = "ID")
+# check object. Please note that now rows are labeled with OTU_number
+head(taxa1)
+
+# create the object that phyloseq calls
+# First we use only specific columns, removing Seq (1) and Family_Genus (6)
+names(taxa1)
+taxon_phyloseq <- taxa1 %>% select (-c(1,6))
+# check object and its structure
+head(taxon_phyloseq)
+class(taxon_phyloseq) # file is data.frame but phyloseq asks a matrix
+## from data.frame to matrix
+taxon_phyloseq <- as.matrix(taxon_phyloseq)
+class(taxon_phyloseq)
+
+## Finally we prepare the object containing otus
+## First we assign Family_genus and ID to sequences in 'otu' file from match 
+## between the column 'Seq' for both files taxa1 and otu
+otu_names <- merge(taxa1,
+                   otu_samples_select[ , -which(names(otu_samples_select)
+                   %in% c("sum_otus"))],by="Seq")
+nrow(otu_names)
+names(otu_names)
+
+## create the object to phyloseq from "otu_nm"
+# create ID column
+otu_phyloseq <- otu_names %>% mutate(ID = paste('OTU',row_number(),sep="_")) %>% 
+  # ID as row name
+  column_to_rownames(var = "ID") %>% 
+  # keep only samples
+  select(-c(1:8)) 
+## check data structure
+## Note that only sample columns are included and each column stores only numbers
+str(otu_phyloseq)
+head(otu_phyloseq)
+
+##### Table with seq, taxonomy and otus ID :)
+
+otus_identity <- taxa_select %>% unite(Family_Genus, Family, Genus, sep = "_", remove = FALSE) %>%
+  # create ID column
+  mutate(ID = paste('OTU',row_number(),sep="_")) %>% 
+# check object. Please note that now rows are labeled with OTU_number
+  unite(OTU_identity, ID, Family_Genus, sep = "_", remove = FALSE) %>%
+  select (6,10,7,2:5,8,9,1)
+
+# See information available
+names(otus_identity)
+
+# Example comparing two different OTUS holding same family and genus
+otus_identity %>% filter (OTU_identity %in% c('OTU_15_Endozoicomonadaceae_Endozoicomonas',
+                                              'OTU_16_Endozoicomonadaceae_Endozoicomonas'))
+
+# Save csv holding all OTUS identity information
+# makes sure include in the cvs name the name of the species subjected to analysis
+write.csv(otus_identity, "C:\\Users\\Elena\\Desktop\\Hypoxia UF\\Tent_Expm\\R_pipeline\\phyloseq\\otus_identity_Aten_FT_Aft.csv", row.names=FALSE)
+write.csv(otus_identity, "C:\\Users\\Elena\\Desktop\\Hypoxia UF\\Tent_Expm\\R_pipeline\\phyloseq\\otus_identity_Aten_FT.csv", row.names=FALSE)
+write.csv(otus_identity, "C:\\Users\\Elena\\Desktop\\Hypoxia UF\\Tent_Expm\\R_pipeline\\phyloseq\\otus_identity_Ssid_FT_bef_rec.csv", row.names=FALSE)
+
+##### let's create phyloseq object
+
+# Call object storing otus: otu_phyloseq
+# rows are labeled with OTUs ID
+OTU = otu_table(otu_phyloseq, taxa_are_rows = TRUE)
+# Call object storing taxon: taxon_phyloseq
+TAX = tax_table(taxon_phyloseq)
+# Call object storing metadata of samples: sample
+samples = sample_data(sample_phyloseq)
+# Create phyloseq object storing OTU, TAX and samples
+phca <- phyloseq(OTU, TAX, samples)
+# check phyloseq object: phca
+phca
+
+################# Analyses ########################
+
+## Create rarefaction plot, preparing a new object only from OTUs data
+tab <- otu_table(phca)
+## This 'tab' object should be a matrix
+class(tab) <- "matrix"
+# transpose observations to rows applying t()
+tab <- t(tab)
+# Run rarecurve()
+rare <- rarecurve(tab, step=400, lwd=2, ylab="OTU",  label=F)
+
+### we can check data and run a more fancy plot with Vegan
+
+## Firts we transpose our otu object:otu_phyloseq
+otu.rare <- t(otu_phyloseq)
+# observed number of species
+S <- specnumber(otu.rare) 
+(raremax <- min(rowSums(otu.rare)))
+Srare <- rarefy(otu.rare, raremax)
+plot(S, Srare, xlab = "Observed No. of Species", ylab = "Rarefied No. of Species")
+abline(0, 1)
+## rarefaction curve
+rarecurve(otu.rare, step = 20, sample = raremax, col = "blue", cex = 0.6)
+
+## Further explorations
+
+ps <- phca # rename phyloseq object 
+# plot number of observed ASVs in coral samples
+plot_richness(ps,x="Species",color="Tent.treatment",measures=c("Observed",'Chao1'))
+# look at data and chose filtering method for very low abundance ASVs
+ntaxa(ps) #2025
+##filtering out taxa that average out less than one over all samples. 
+## I have filtererd out singletons. 
+ps1<-filter_taxa(ps, function(x) mean(x) >1, TRUE) 
+ntaxa(ps1) #1055
+
+alpha.diversity <- estimate_richness(ps1, measures = c("Observed","Chao1", "Shannon","Simpson"))
+alpha.diversity#table with values
+head(alpha.diversity)
+
+prich <- plot_richness(ps1, x = "Tent.treatment", measures = c("Observed", "Chao1", "Shannon", "Simpson"))
+prich <- prich + geom_boxplot(aes(fill = Tent.treatment), alpha=0.2)
+plot(prich)
+  
+ps1@sam_data$Expm.status  <- factor(ps@sam_data$Expm.status , levels=c('Bef','Aft','Rec'))
+prich <- plot_richness(ps1, x = "Expm.status", measures = c("Observed", "Chao1", "Shannon", "Simpson"))
+prich <- prich + geom_boxplot(aes(fill = Expm.status), alpha=0.2)
+plot(prich)
+
+ggsave(file = "C:/Users/Elena/Desktop/Hypoxia UF/Tent_Expm/R_pipeline/phyloseq/alpha_Aten_FT.png",
+       width = 160,height = 160, units = "mm", dpi = 300, bg = "white")
+ggsave(file = "C:/Users/Elena/Desktop/Hypoxia UF/Tent_Expm/R_pipeline/phyloseq/alpha_Aten_FT.pdf",
+       width = 160,height = 160, units = "mm", dpi = 300, bg = "white", device=cairo_pdf)
+
+#### Alpha diversity (uno por uno los plots...)
+# plot_richness(ps1,x="Tent.treatment",color="Species",measures=c("Observed"))
+# plot_richness(ps1,x="Expm.status",color="Species",measures=c("Observed"))
+# plot_richness(ps1,x="Expm.status",color="Species",measures=c("Chao1"))
+# plot_richness(ps1,x="Tent.treatment",color="Species",measures=c("Chao1"))
+# plot_richness(ps1,x="Expm.status",color="Species",measures=c("Shannon"))
+# plot_richness(ps1,x="Tent.treatment",color="Species",measures=c("Shannon"))
+
+
+### Statistical comparison alpha diversity metrics
+
+# Join data alpha diversity with phyloseq object (phca)
+# after singletons filtering (ps1)
+data <- cbind(sample_data(ps1), alpha.diversity)
+
+## If the value of p is equal to or less than 0.05, 
+## then the hypothesis of normality will be rejected 
+## by the Shapiro test. On failing, the test can state 
+## that the data will not fit the distribution normally 
+## with 95% confidence
+shapiro.test(data$Observed) # p-value = 0.002466
+shapiro.test(data$Chao1) # p-value = 0.002466
+shapiro.test(data$Shannon) # p-value = 0.487
+shapiro.test(data$Simpson) # p-value = 0.01088
+# Only Shannon follows normality
+
+names(data)
+table(data$Expm.status)
+phy.anova <- aov(Observed ~ Expm.status, data)
+summary(phy.anova)
+## Since the p-value in our ANOVA table (0.0954) is not less than .05, 
+## we have sufficient evidence to accept the null hypothesis.
+## This means we have sufficient evidence to say that 
+## the alpha diversity:Shannon by 'Expm.status' does not differ between
+## the three experiment status.
+TukeyHSD(phy.anova)
+#          diff        lwr      upr     p adj
+# Aft-Bef 0.8411577 -0.5574490 2.239764 0.2916947
+# Rec-Bef 1.2387121 -0.1598946 2.637319 0.0865914
+# Rec-Aft 0.3975544 -1.0010523 1.796161 0.7450362
+
+#for not normal data
+
+adiv <- data.frame(
+  "Simpson" = phyloseq::estimate_richness(ps1, measures = "Simpson"),
+  "Observed" = phyloseq::estimate_richness(ps1, measures = "Observed"),
+  "Chao1" = phyloseq::estimate_richness(ps1, measures = "Chao1"),
+  "Expm.status" = phyloseq::sample_data(ps1)$Expm.status)
+
+## As the p-value is less than the significance level 0.05,
+## we can conclude that there are significant differences 
+## between the treatment groups.
+phy.kruskal<- kruskal.test(Simpson ~ Expm.status, data = adiv)
+phy.kruskal # p-value = 0.09473
+pairwise.wilcox.test(adiv$Simpson, adiv$Expm.status, p.adjust.method="fdr")
+#        Bef   Aft  
+# Aft   0.045 -    # there are significant differences
+#   Rec 0.360 0.394 # there are not significant differences
+
+phy.kruskal<- kruskal.test(Observed ~ Expm.status, data = adiv)
+phy.kruskal # p-value = 0.01583
+pairwise.wilcox.test(adiv$Observed, adiv$Expm.status, p.adjust.method="fdr")
+
+phy.kruskal<- kruskal.test(Chao1.Chao1 ~ Expm.status, data = adiv)
+phy.kruskal # p-value = 0.01583
+pairwise.wilcox.test(adiv$Chao1, adiv$Expm.status, p.adjust.method="fdr")
+
+################ Relative abundanceFirst ######################
+
+dat <- otu_table(ps1) # call only sample x otus
+dat1 <- as.data.frame(dat@.Data) # as dataframe
+dat2 <- tibble::rownames_to_column(dat1, "Otus") # convert row names into column
+
+# reshape matrix putting all samples in the same column
+dat3 <- stack(dat2[-1])
+head(dat3)
+# allocate otus name Asvs
+dat3$Otus <- rep(dat2$Otus,ncol(dat2[-1]))
+# change some head names
+colnames(dat3)[1:2] <- c('abundance','sample')
+head(dat3)
+
+dat4 <- dat3 %>% 
+  filter(abundance != 0) %>%
+  #filter(!is.na(abundance)) %>% 
+  group_by(Otus) %>%
+  summarise(total = sum(abundance)) %>% 
+  arrange(desc(total)) %>% 
+  mutate(abun_rel = round(total / sum(total), 4)) %>%
+  mutate(abun_rel_cum = cumsum(abun_rel)) %>%
+  filter(abun_rel_cum <= 0.60) %>%
+  rename (ID = Otus)
+
+# Otus ,contributing on 85% for FT
+unique(dat4$ID)
+
+names(otus_identity)
+otus_identity$ID
+
+dat5 <- merge(dat4, otus_identity, by = "ID", 
+                  all.x = FALSE) 
+nrow(dat5)
+names(dat5)
+
+
+ggplot(data=subset(dat5,abun_rel_cum<=1), 
+       aes(x=reorder(OTU_identity, -abun_rel), y=abun_rel, fill=OTU_identity)) +
+  geom_bar(stat="identity")+ 
+  theme(legend.position = "none")+
+  ggtitle("60% contribution for Ssid_FT_bef_rec") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  xlab("OTUS") + ylab("Abund_rel (%)")
+
+
+####### Scenarios from data transformation ########
+
+#### No transformation
+bc1 <- transform_sample_counts(ps1, function(x)  x/10)
+mean(otu_table(bc1))
+boxplot(bc1@otu_table@.Data)
+
+#### Abund rel
+ts1 = transform_sample_counts(ps1, function(x) 1E4 * x/sum(x))
+mean(otu_table(ts1))
+boxplot(ts1@otu_table@.Data)
+
+#### Apply log+1 on transformed data
+lg1 <- transform_sample_counts(ts1, function(x) 1E1 *log(x+1))
+mean(otu_table(lg1))
+boxplot(lg1@otu_table@.Data)
+
+#### Apply square root
+sq1 <- transform_sample_counts(ts1, function(x) sqrt(1E6 * x/sum(x)))
+mean(otu_table(sq1))
+boxplot(sq1@otu_table@.Data)
+
+
+
+################ PCA ######################
+## https://joey711.github.io/phyloseq/plot_ordination-examples.html
+vignette("phyloseq-basics")
+## https://www.bioconductor.org/packages/devel/bioc/vignettes/phyloseq/inst/doc/phyloseq-analysis.html
+
+### Choose scenario
+sce = sq1 #bc1, ts1, lg1, sq1
+ps_bray <- phyloseq::distance(sce, method = "bray")
+
+# ps_nmds <- ordinate(
+#   physeq = ps1,
+#   method = "NMDS",
+#   distance = "bray"
+# )
+
+ps_PCoA <- ordinate(
+  physeq = sce,
+  method = "PCoA",
+  distance = "bray"
+)
+
+plot_ordination(
+  physeq = sce,
+  ordination = ps_PCoA,
+  color = "Expm.status",
+  title = "PCoA bacterial Communities"
+)
+
+ +
+#   scale_color_manual(values = c("blue", "red","green", "#95A900", "#00B81F","#00BF7D","#00C0B8", "#00B8E5", "#00A5FF", "#AC88FF", "#E76BF3", "#FF62BC", "#FF6C90" )
+#   ) +
+#   geom_point(aes(color = yecat), alpha = 1, size = 3, shape = 16)
+
+
+#####################         PERMANOVA         #######################
+#for evaluate differences between Expm.status using Bray Curtis dissimilarities
+
+# Method 1
+metbd <- as(sample_data(sce), "data.frame")
+adonis2(distance(sce, method="bray") ~ Expm.status,
+        data = metbd)# , by = "margin"
+
+# Method 2: Simpler way
+ps_dist_matrix <- phyloseq::distance(sce, method ="bray")
+vegan::adonis2(ps_dist_matrix ~ phyloseq::sample_data(sce)$Expm.status)
+
+#pairwise comparison
+pairwise.adonis(ps_dist_matrix, phyloseq::sample_data(sce)$Expm.status,
+                p.adjust.m = "bonferroni")
+
+
+# Comparing among couples - It is not ideal
+Bef_Aft <- subset_samples(sce, Expm.status %in% c('Bef','Aft'))
+Bef_Aft@sam_data
+metbd1 <- as(sample_data(Bef_Aft), "data.frame")
+adonis2(distance(Bef_Aft, method="bray") ~ Expm.status,
+        data = metbd1)
+
+Bef_Rec <- subset_samples(sce, Expm.status %in% c('Bef','Rec'))
+Bef_Rec@sam_data
+metbd2 <- as(sample_data(Bef_Rec), "data.frame")
+adonis2(distance(Bef_Rec, method="bray") ~ Expm.status,
+        data = metbd2)
+
+Aft_Rec <- subset_samples(sce, Expm.status %in% c('Aft','Rec'))
+Aft_Rec@sam_data
+metbd3 <- as(sample_data(Aft_Rec), "data.frame")
+adonis2(distance(Aft_Rec, method="bray") ~ Expm.status,
+        data = metbd3) #, by = "margin"
+
+##########Beta Diversity Dispersions######################
+
+#calculate multivariate dispersions based on treatment
+
+ps_dist_matrix <- phyloseq::distance(sce, method ="bray")
+
+mod <-betadisper(ps_dist_matrix, phyloseq::sample_data(sce)$Expm.status, type = c("median")
+              )
+anova(mod)
+permutest(mod, pairwise = TRUE,
+          permutations = 999,
+          parallel = getOption("mc.cores"))
+
+
+plot(mod)
+boxplot(mod)
+
+#######################  Heatmap  ######################
+
+heat.sample <- plot_taxa_heatmap(ts1, subset.top = 25,
+                                 VariableA = "Expm.status",
+                                 heatcolors = brewer.pal(100, "Blues"),
+                                 transformation = "log10")
+
+
+
+######################### CORNCOB: TEST OF DIFFERENTIALLY ABUNDANT FAMILIES ###################################
+#Este analisis se corre con read counts (no transformation ni ab rel, ya lo hace)
+# create a function that will return the values of interest
+##corncob$significant_models[[1]]$coefficients.# This is to see the coeff
+# This one is for when there is three comparisons, in this case, Expm. status and Bef as a reference
+extractmods3 <- function(model) {
+  result <- data.frame("Estimate" = model$coefficients[2:3, 1], #####in these brackets, the first ### is the row (or range of rows, specified by a colon). second ## is a column that always starts at 1
+                       "Std.Error" = model$coefficients[2:3, 2], 
+                       "p" = model$coefficients[2:3, 4],
+                       "Expm.status"=c("Aft", "Rec"))
+  return(result)
+}
+
+# Set the levels. Corncob will automatically "choose" the control/reference level as the first one. 
+sample_data(ps1)$Expm.status <- factor(sample_data(ps1)$Expm.status,levels=c("Bef","Aft","Rec")) #Bef as a reference
+
+set.seed(1)
+corncob <- differentialTest(formula = ~ Expm.status, 
+                            phi.formula = ~ Expm.status,
+                            formula_null = ~ 1,
+                            phi.formula_null = ~ Expm.status,
+                            test = "Wald", boot = FALSE,
+                            data = ps1,
+                            fdr_cutoff = 0.05)
+
+plot(corncob, level="Genus") # check out the results with the corncob plot function
+
+##Prepare corncob data for visualization
+
+# save the *.da outputs and add asv, p.adj values to it, and ultimately taxonomny info
+corncob.models <- lapply(corncob$significant_models, extractmods3)
+
+names(corncob.models) <- corncob$significant_taxa
+
+# Add ASVs to the taxonomy table and save the significant asvs
+#tax_table(ps1)[,7] <- rownames(tax_table(ps1))
+
+
+corncob.taxonomy <- as.data.frame(tax_table(ps1)[corncob$significant_taxa,])
+
+library(plyr)
+# Move the data from a list to a dataframe and add taxonomy info
+corncob.models.df <- ldply(corncob.models, data.frame) %>% 
+  left_join(corncob.taxonomy, by = c(".id" = "Genus")) %>%
+  mutate(genusasv = paste0(Genus, "_(", .id,")"))
+
+
+### Save these data so you don't have to re-run the model ###
+write.table(corncob.models.df, "corncob.txt", sep="\t",row.names = FALSE)
+
+
+##############Agaricia tenuifolia######################
+sp<-read.table("corncob.txt", sep = "\t", header=TRUE)
+
+sp <- sp %>% 
+  arrange(desc(Class), Estimate)
+
+genusASVorder <- sp %>%
+  arrange(desc(Class), Estimate) %>%
+  dplyr::select(genusasv) %>%
+  unique()
+
+sp$Genus <- factor(sp$Genus, levels = as.vector(genusASVorder$genusasv))
+
+
+cobs<-ggplot(sp, aes(x = genusasv, y = Estimate, fill = Class)) +
+  geom_errorbar(aes(ymin = Estimate-Std.Error, ymax = Estimate+Std.Error), color = "black", width = .3, position=position_dodge(.9)) +
+  geom_point(size = 4, shape=21) +
+  coord_flip() +
+  theme_bw() +
+  labs(x = "Taxa", y = "Differential Abundance", title = "Figure x. Significantly changing ASVs relative to Bef") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "darkgray") +
+  theme(plot.background = element_blank(), 
+        legend.position = "bottom") +
+  facet_grid(. ~ Site)+
+  scale_fill_manual(values = cols)
+
+# adjust width and height
+#pdf("CornCob_Survey_ATEN_Site",width=12, height=7)
+cobs
+#dev.off()
+
+
+```
+
+
+## Bar plot
+
+# There is a big number of samples, so we can subsample some of them
+
+
+# Create the object
+physeq = phyloseq(OTU_sample, TAX)
+physeq
+plot_bar(physeq, fill = "Family")
+
+## random phylogenetic tree with the ape package
+random_tree = rtree(ntaxa(physeq), rooted=TRUE, tip.label=taxa_names(physeq))
+plot(random_tree)
+
+## Merge new data with current phyloseq object:
+physeq1 = merge_phyloseq(physeq, samples, random_tree)
+physeq1
+
+## Rebuild phyloseq data from scratch using 
+## all the simulated data components we just generated:
+physeq2 = phyloseq(OTU_sample, TAX, samples, random_tree)
+physeq2
+
+## Are they identical?
+identical(physeq1, physeq2)
+
+## Let’s build a couple tree plots with the new combined data.
+
+# check names of samples to choose what treatment you want to plot
+# using 'color'. Here we choose "Tent.treatment"
+samples@names
+
+plot_tree(physeq1, color="Tent.treatment", 
+          label.tips="taxa_names", 
+          ladderize="left", plot.margin=0.3)
+
+## Including Species and Tent.treatment
+plot_tree(physeq1, color="Species", shape="Tent.treatment", 
+          label.tips="taxa_names", ladderize="right", 
+          plot.margin=0.3)
+
+## Now how about some heatmaps. 
+# No working yet. Maybe because no full sample is used
+plot_heatmap(physeq1)
+plot_heatmap(physeq1, taxa.label="Phylum")
+
+
+
+
