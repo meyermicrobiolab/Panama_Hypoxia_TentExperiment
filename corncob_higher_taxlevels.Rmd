@@ -1,0 +1,68 @@
+---
+title: "Corncob_higher_taxlevels"
+author: "J. Meyer"
+date: "2024-12-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(phyloseq)
+library(corncob)
+```
+
+### Use corncob to look for differentially abundant taxa at the genus, family, order, or class levels in the low oxygen treatment
+
+
+```{r, echo=FALSE}
+# read in count data
+otu <- read.table("Tent_Expm_silva_nochloronomito_otu_table.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("Tent_Expm_silva_nochloronomito_taxa_table.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("Tent_Expm_Metadata.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+                        sample_data(samples), 
+                        tax_table(taxon))
+ps  # 11845 taxa and 96 samples
+
+# FIX the NAs in the taxa table
+taxon <- as.data.frame(TAX,stringsAsFactors=FALSE)
+taxon$Genus[is.na(taxon$Genus)] <- taxon$Family[is.na(taxon$Genus)]
+write.table(taxon,"silva_nochloronomito_taxa_table.txt",sep="\t",col.names=NA)
+
+
+ps1 = subset_samples(ps, Tent.treatment == "FT")
+ps1 # 11845 taxa and 36 samples, keeping both coral species here
+ps1 <- prune_taxa(taxa_sums(ps1) > 1, ps1) #remove taxa not found in remaining samples
+ps1 # 4936 taxa and 36 samples, keeping both coral species here
+# Now export cleaned otu and taxa tables from phyloseq for future reference
+otu = as(otu_table(ps1), "matrix")
+taxon = as(tax_table(ps1), "matrix")
+metadata = as(sample_data(ps1), "matrix")
+write.table(otu,"silva_nochloronomito_otu_table_ps1.txt",sep="\t",col.names=NA)
+write.table(taxon,"silva_nochloronomito_taxa_table_ps1.txt",sep="\t",col.names=NA)
+
+psA = subset_samples(ps1, Species == "Aten")
+psA # 4936 taxa and 18 samples, just ATEN
+psA <- prune_taxa(taxa_sums(psA) > 1, psA) #remove taxa not found in remaining samples
+psA # 2024 taxa and 18 samples, just ATEN
+otu = as(otu_table(psA), "matrix")
+taxon = as(tax_table(psA), "matrix")
+metadata = as(sample_data(psA), "matrix")
+write.table(otu,"silva_nochloronomito_otu_table_psA.txt",sep="\t",col.names=NA)
+write.table(taxon,"silva_nochloronomito_taxa_table_psA.txt",sep="\t",col.names=NA)
+
+psB = subset_samples(ps1, Species == "Ssid")
+psB # 4936 taxa and 18 samples, just SSID
+psB <- prune_taxa(taxa_sums(psB) > 1, psB) #remove taxa not found in remaining samples
+psB # 3613 taxa and 18 samples, just SSID
+otu = as(otu_table(psB), "matrix")
+taxon = as(tax_table(psB), "matrix")
+metadata = as(sample_data(psB), "matrix")
+write.table(otu,"silva_nochloronomito_otu_table_psB.txt",sep="\t",col.names=NA)
+write.table(taxon,"silva_nochloronomito_taxa_table_psB.txt",sep="\t",col.names=NA)
+
+```
+
