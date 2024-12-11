@@ -8,10 +8,10 @@ output: html_document
 ```{r setup, include=FALSE}
 library(phyloseq)
 library(corncob)
+writeLines(capture.output(sessionInfo()), "sessionInfo.txt")
 ```
 
-### Use corncob to look for differentially abundant taxa at the genus, family, order, or class levels in the low oxygen treatment
-
+### Prepare data for corncob analysis - first selecting only samples in the fully enclosed tent treatment, collapsing ASVs into higher taxonomic levels for differential abundance analysis, and separating datasets by coral species (just in case). The plan is to DA analysis across both coral species here. DA of ASVs was already performed with coral species.
 
 ```{r, echo=FALSE}
 # read in count data
@@ -27,12 +27,6 @@ ps <- phyloseq(otu_table(otu, taxa_are_rows=FALSE),
                         tax_table(taxon))
 ps  # 11845 taxa and 96 samples
 
-# FIX the NAs in the taxa table
-taxon <- as.data.frame(TAX,stringsAsFactors=FALSE)
-taxon$Genus[is.na(taxon$Genus)] <- taxon$Family[is.na(taxon$Genus)]
-write.table(taxon,"silva_nochloronomito_taxa_table.txt",sep="\t",col.names=NA)
-
-
 ps1 = subset_samples(ps, Tent.treatment == "FT")
 ps1 # 11845 taxa and 36 samples, keeping both coral species here
 ps1 <- prune_taxa(taxa_sums(ps1) > 1, ps1) #remove taxa not found in remaining samples
@@ -43,7 +37,46 @@ taxon = as(tax_table(ps1), "matrix")
 metadata = as(sample_data(ps1), "matrix")
 write.table(otu,"silva_nochloronomito_otu_table_ps1.txt",sep="\t",col.names=NA)
 write.table(taxon,"silva_nochloronomito_taxa_table_ps1.txt",sep="\t",col.names=NA)
+write.table(metadata,"metadata_ps1.txt",sep="\t",col.names=NA)
 
+
+otu <- read.table("silva_nochloronomito_otu_table_ps1.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("silva_nochloronomito_taxa_table_ps1.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("metadata_ps1.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps1 <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+                        sample_data(samples), 
+                        tax_table(taxon))
+ps1 #4936 taxa and 36 samples
+
+
+
+# collapse ASVs into higher taxonomic groups for DA analysis
+dat <- tax_glom(ps1, taxrank = "Family")
+datm <- psmelt(dat)
+
+
+
+ps1_family <- ps1 %>% phyloseq::tax_glom("Family")
+ps1_family # 549 taxa (families) and 36 samples
+
+
+taxonF = as(tax_table(ps1_family), "matrix")
+write.table(taxonF,"silva_nochloronomito_taxa_table_ps1_family.txt",sep="\t",col.names=NA)
+otuF = as(otu_table(ps1_family), "matrix")
+write.table(otuF,"silva_nochloronomito_otu_table_ps1_family.txt",sep="\t",col.names=NA)
+
+ps1_order <- ps1 %>% phyloseq::tax_glom("Order")
+ps1_order # 336 taxa (orders) and 36 samples
+
+ps1_class <- ps1 %>% phyloseq::tax_glom("Class")
+ps1_class # 147 taxa (classes) and 36 samples
+
+
+#prepare data by coral species, just in case 
 psA = subset_samples(ps1, Species == "Aten")
 psA # 4936 taxa and 18 samples, just ATEN
 psA <- prune_taxa(taxa_sums(psA) > 1, psA) #remove taxa not found in remaining samples
@@ -51,18 +84,87 @@ psA # 2024 taxa and 18 samples, just ATEN
 otu = as(otu_table(psA), "matrix")
 taxon = as(tax_table(psA), "matrix")
 metadata = as(sample_data(psA), "matrix")
-write.table(otu,"silva_nochloronomito_otu_table_psA.txt",sep="\t",col.names=NA)
-write.table(taxon,"silva_nochloronomito_taxa_table_psA.txt",sep="\t",col.names=NA)
+write.table(otu,"silva_nochloronomito_otu_table_psA_ATEN_FT.txt",sep="\t",col.names=NA)
+write.table(taxon,"silva_nochloronomito_taxa_table_psA_ATEN_FT.txt",sep="\t",col.names=NA)
 
-psB = subset_samples(ps1, Species == "Ssid")
-psB # 4936 taxa and 18 samples, just SSID
-psB <- prune_taxa(taxa_sums(psB) > 1, psB) #remove taxa not found in remaining samples
-psB # 3613 taxa and 18 samples, just SSID
-otu = as(otu_table(psB), "matrix")
-taxon = as(tax_table(psB), "matrix")
-metadata = as(sample_data(psB), "matrix")
-write.table(otu,"silva_nochloronomito_otu_table_psB.txt",sep="\t",col.names=NA)
-write.table(taxon,"silva_nochloronomito_taxa_table_psB.txt",sep="\t",col.names=NA)
+psS = subset_samples(ps1, Species == "Ssid")
+psS # 4936 taxa and 18 samples, just SSID
+psS <- prune_taxa(taxa_sums(psS) > 1, psS) #remove taxa not found in remaining samples
+psS # 3613 taxa and 18 samples, just SSID
+otu = as(otu_table(psS), "matrix")
+taxon = as(tax_table(psS), "matrix")
+metadata = as(sample_data(psS), "matrix")
+write.table(otu,"silva_nochloronomito_otu_table_psS_SSID_FT.txt",sep="\t",col.names=NA)
+write.table(taxon,"silva_nochloronomito_taxa_table_psS_SSID_FT.txt",sep="\t",col.names=NA)
+
+```
+
+### Now use corncob to look for differentially abundant taxa at the family, order, or class levels in the low oxygen treatment across both coral species
+
+
+
+```{r, echo=FALSE}
+
+otu <- read.table("silva_nochloronomito_otu_table_ps1_family.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("silva_nochloronomito_taxa_table_ps1_family.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("metadata_ps1.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps1_family <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+                        sample_data(samples), 
+                        tax_table(taxon))
+ps1_family #549 families and 36 samples
+
+
+# DA determined relative to first reference level, so set this manually to the "none" treatment
+sample_data(ps1_family)$Expm.status<-factor(sample_data(ps1_family)$Expm.status,levels=c("Bef","Aft","Rec"))
+
+
+set.seed(1)
+timepoint.da <- differentialTest(formula = ~ Expm.status, 
+                                 phi.formula = ~ Expm.status,
+                                 formula_null = ~ 1,
+                                 phi.formula_null = ~ Expm.status,
+                                 test = "Wald", boot = FALSE,
+                                 data = ps1_family,
+                                 fdr_cutoff = 0.05)
+
+timepoint.da$significant_taxa # 29 differential abundant families out of 549
+
+#quick look at results with corncob's plotting feature
+plot(timepoint.da) # lists full taxonomy
+plot(timepoint.da, level="Family") # lists just Family
+
+# create a function that will return the values of interest
+# This one is for when there is only one comparison
+extractmods <- function(model) {
+  result <- data.frame("Estimate" = model$coefficients[2, 1], 
+                       "Std.Error" = model$coefficients[2, 2], 
+                       "p" = model$coefficients[2, 4])
+  return(result)
+}
+
+# save the timepoint.da output and add asv, p.adj values to it, and ultimately taxonomy info
+timepoint.da.models <- lapply(timepoint.da$significant_models, extractmods)
+names(timepoint.da.models) <- timepoint.da$significant_taxa
+
+# Add ASVs to the taxonomy table and save the significant asvs
+tax_table(ps1_family)[,6] <- rownames(tax_table(ps1_family))
+sig.taxonomy.timepoint <- as.data.frame(tax_table(ps1_family)[timepoint.da$significant_taxa,]) 
+
+library(plyr)
+# Move the data from a list to a dataframe and add taxonomy info
+#timepoint.da.models.df <- ldply(timepoint.da.models, data.frame) %>% 
+  left_join(sig.taxonomy.timepoint, by = c(".id" = "Species")) %>%
+  mutate(genusasv = paste0(Family, "_(", .id,")"))
+
+### Save these data so you don't have to re-run the model ###
+write.table(timepoint.da.models.df, "DA_timepoint_Family.txt", sep="\t",row.names = FALSE)
+
+
+
 
 ```
 
