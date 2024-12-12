@@ -53,21 +53,14 @@ ps1 <- phyloseq(otu_table(otu, taxa_are_rows=FALSE),
 ps1 #4936 taxa and 36 samples
 
 
-
 # collapse ASVs into higher taxonomic groups for DA analysis
-dat <- tax_glom(ps1, taxrank = "Family")
-datm <- psmelt(dat)
-
-
-
 ps1_family <- ps1 %>% phyloseq::tax_glom("Family")
 ps1_family # 549 taxa (families) and 36 samples
-
-
 taxonF = as(tax_table(ps1_family), "matrix")
 write.table(taxonF,"silva_nochloronomito_taxa_table_ps1_family.txt",sep="\t",col.names=NA)
 otuF = as(otu_table(ps1_family), "matrix")
 write.table(otuF,"silva_nochloronomito_otu_table_ps1_family.txt",sep="\t",col.names=NA)
+# this keep the ASV label as the row names in the taxa table (and column names in otu table)
 
 ps1_order <- ps1 %>% phyloseq::tax_glom("Order")
 ps1_order # 336 taxa (orders) and 36 samples
@@ -99,7 +92,7 @@ write.table(taxon,"silva_nochloronomito_taxa_table_psS_SSID_FT.txt",sep="\t",col
 
 ```
 
-### Now use corncob to look for differentially abundant taxa at the family, order, or class levels in the low oxygen treatment across both coral species
+### Now use corncob to look for differentially abundant taxa at the family level in the low oxygen treatment across both coral species
 
 
 
@@ -154,17 +147,71 @@ names(timepoint.da.models) <- timepoint.da$significant_taxa
 tax_table(ps1_family)[,6] <- rownames(tax_table(ps1_family))
 sig.taxonomy.timepoint <- as.data.frame(tax_table(ps1_family)[timepoint.da$significant_taxa,]) 
 
-library(plyr)
-# Move the data from a list to a dataframe and add taxonomy info
-#timepoint.da.models.df <- ldply(timepoint.da.models, data.frame) %>% 
-  left_join(sig.taxonomy.timepoint, by = c(".id" = "Species")) %>%
-  mutate(genusasv = paste0(Family, "_(", .id,")"))
-
-### Save these data so you don't have to re-run the model ###
-write.table(timepoint.da.models.df, "DA_timepoint_Family.txt", sep="\t",row.names = FALSE)
-
-
-
 
 ```
+
+
+
+### Now use corncob to look for differentially abundant taxa at the order level in the low oxygen treatment across both coral species
+
+
+
+```{r, echo=FALSE}
+
+ps1_order # 336 orders and 36 samples
+
+# DA determined relative to first reference level, so set this manually to the "none" treatment
+sample_data(ps1_order)$Expm.status<-factor(sample_data(ps1_order)$Expm.status,levels=c("Bef","Aft","Rec"))
+
+
+set.seed(1)
+timepoint.da <- differentialTest(formula = ~ Expm.status, 
+                                 phi.formula = ~ Expm.status,
+                                 formula_null = ~ 1,
+                                 phi.formula_null = ~ Expm.status,
+                                 test = "Wald", boot = FALSE,
+                                 data = ps1_order,
+                                 fdr_cutoff = 0.05)
+
+timepoint.da$significant_taxa # 32 differential abundant orders out of 336
+
+#quick look at results with corncob's plotting feature
+plot(timepoint.da) # lists full taxonomy
+plot(timepoint.da, level="Order") # lists just Order
+
+```
+
+
+
+
+### Now use corncob to look for differentially abundant taxa at the order level in the low oxygen treatment across both coral species
+
+
+
+```{r, echo=FALSE}
+
+ps1_class # 147 classes and 36 samples
+
+# DA determined relative to first reference level, so set this manually to the "none" treatment
+sample_data(ps1_class)$Expm.status<-factor(sample_data(ps1_class)$Expm.status,levels=c("Bef","Aft","Rec"))
+
+
+set.seed(1)
+timepoint.da <- differentialTest(formula = ~ Expm.status, 
+                                 phi.formula = ~ Expm.status,
+                                 formula_null = ~ 1,
+                                 phi.formula_null = ~ Expm.status,
+                                 test = "Wald", boot = FALSE,
+                                 data = ps1_class,
+                                 fdr_cutoff = 0.05)
+
+timepoint.da$significant_taxa # 20 differential abundant classes out of 147
+
+#quick look at results with corncob's plotting feature
+plot(timepoint.da) # lists full taxonomy
+plot(timepoint.da, level="Class") # lists just Class
+
+```
+
+
 
