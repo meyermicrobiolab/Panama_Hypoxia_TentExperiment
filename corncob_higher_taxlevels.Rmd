@@ -99,7 +99,7 @@ timepoint.da$significant_taxa # 17 differential abundant ASV out of 4936
 plot(timepoint.da, level="Genus") # lists by genus
 
 # create a function that will return the values of interest
-# This one is for when there is only one comparison
+# This one is for when there is only one comparison (here I only want to know what changed after low oxygen)
 extractmods <- function(model) {
   result <- data.frame("Estimate" = model$coefficients[2, 1], 
                        "Std.Error" = model$coefficients[2, 2], 
@@ -264,6 +264,16 @@ timepoint.da$significant_taxa # 20 differential abundant classes out of 147
 plot(timepoint.da) # lists full taxonomy
 plot(timepoint.da, level="Class") # lists just Class
 
+
+# create a function that will return the values of interest
+# This one is for when there is only one comparison (here I only want to know what changed after low oxygen)
+extractmods <- function(model) {
+  result <- data.frame("Estimate" = model$coefficients[2, 1], 
+                       "Std.Error" = model$coefficients[2, 2], 
+                       "p" = model$coefficients[2, 4])
+  return(result)
+}
+
 # save the timepoint.da output and add asv, p.adj values to it, and ultimately taxonomny info
 timepoint.da.models <- lapply(timepoint.da$significant_models, extractmods)
 names(timepoint.da.models) <- timepoint.da$significant_taxa
@@ -283,3 +293,130 @@ write.table(timepoint.da.models.df, "DA_CLASS_timepoint.txt", sep="\t",row.names
 
 
 
+### Corncob DA analysis with coral species separated
+
+
+```{r, echo=FALSE}
+#prepare data by coral species 
+psS = subset_samples(ps1, Species == "Aten")
+psS # 4936 taxa and 18 samples, just ATEN
+psS <- prune_taxa(taxa_sums(psS) > 1, psS) #remove taxa not found in remaining samples
+psS # 2024 taxa and 18 samples, just ATEN
+otu = as(otu_table(psS), "matrix")
+taxon = as(tax_table(psS), "matrix")
+metadata = as(sample_data(psS), "matrix")
+write.table(otu,"silva_nochloronomito_otu_table_psS_ATEN_FT.txt",sep="\t",col.names=NA)
+write.table(taxon,"silva_nochloronomito_taxa_table_psS_ATEN_FT.txt",sep="\t",col.names=NA)
+psS = subset_samples(ps1, Species == "Ssid")
+psS # 4936 taxa and 18 samples, just SSID
+psS <- prune_taxa(taxa_sums(psS) > 1, psS) #remove taxa not found in remaining samples
+psS # 3613 taxa and 18 samples, just SSID
+otu = as(otu_table(psS), "matrix")
+taxon = as(tax_table(psS), "matrix")
+metadata = as(sample_data(psS), "matrix")
+write.table(otu,"silva_nochloronomito_otu_table_psS_SSID_FT.txt",sep="\t",col.names=NA)
+write.table(taxon,"silva_nochloronomito_taxa_table_psS_SSID_FT.txt",sep="\t",col.names=NA)
+
+
+
+
+#### Corncob with only ATEN
+psA # 2024 ASVs and 18 samples
+
+# DA determined relative to first reference level, so set this manually to the "none" treatment
+sample_data(psA)$Expm.status<-factor(sample_data(psA)$Expm.status,levels=c("Bef","Aft","Rec"))
+
+
+set.seed(1)
+timepoint.da <- differentialTest(formula = ~ Expm.status, 
+                                 phi.formula = ~ Expm.status,
+                                 formula_null = ~ 1,
+                                 phi.formula_null = ~ Expm.status,
+                                 test = "Wald", boot = FALSE,
+                                 data = psA,
+                                 fdr_cutoff = 0.05)
+
+timepoint.da$significant_taxa # 11 differential abundant ASVs out of 2024
+
+#quick look at results with corncob's plotting feature
+plot(timepoint.da) # lists full taxonomy
+plot(timepoint.da, level="Genus") # lists just genus
+
+# create a function that will return the values of interest
+# This one is for when there is only one comparison (here I only want to know what changed after low oxygen)
+extractmods <- function(model) {
+  result <- data.frame("Estimate" = model$coefficients[2, 1], 
+                       "Std.Error" = model$coefficients[2, 2], 
+                       "p" = model$coefficients[2, 4])
+  return(result)
+}
+
+# save the timepoint.da output and add asv, p.adj values to it, and ultimately taxonomny info
+timepoint.da.models <- lapply(timepoint.da$significant_models, extractmods)
+names(timepoint.da.models) <- timepoint.da$significant_taxa
+
+# Add ASVs to the taxonomy table and save the significant asvs
+tax_table(psA)[,7] <- rownames(tax_table(psA))
+sig.taxonomy.timepoint <- as.data.frame(tax_table(psA)[timepoint.da$significant_taxa,]) 
+
+# Move the data from a list to a dataframe and add taxonomy info
+timepoint.da.models.df <- ldply(timepoint.da.models, data.frame) %>% 
+  left_join(sig.taxonomy.timepoint, by = c(".id" = "sequence"))
+
+### Save these data so you don't have to re-run the model ###
+write.table(timepoint.da.models.df, "DA_ASV_timepoint_ATEN.txt", sep="\t",row.names = FALSE)
+
+########## ATEN 11 DA ASVS, 4 ASVs enriched after low oxygen = Fusibacter ASVs 6,9,17,18
+
+
+
+
+#### Corncob with only SSID
+psS # 3613 ASVs and 18 samples
+
+# DA determined relative to first reference level, so set this manually to the "none" treatment
+sample_data(psS)$Expm.status<-factor(sample_data(psS)$Expm.status,levels=c("Bef","Aft","Rec"))
+
+
+set.seed(1)
+timepoint.da <- differentialTest(formula = ~ Expm.status, 
+                                 phi.formula = ~ Expm.status,
+                                 formula_null = ~ 1,
+                                 phi.formula_null = ~ Expm.status,
+                                 test = "Wald", boot = FALSE,
+                                 data = psS,
+                                 fdr_cutoff = 0.05)
+
+timepoint.da$significant_taxa # 5 differential abundant ASVs out of 3613, Fusibacter ASV18 and Peptostr. ASV20 enriched after low oxygen
+
+#quick look at results with corncob's plotting feature
+plot(timepoint.da) # lists full taxonomy
+plot(timepoint.da, level="Genus") # lists just genus
+
+# create a function that will return the values of interest
+# This one is for when there is only one comparison (here I only want to know what changed after low oxygen)
+extractmods <- function(model) {
+  result <- data.frame("Estimate" = model$coefficients[2, 1], 
+                       "Std.Error" = model$coefficients[2, 2], 
+                       "p" = model$coefficients[2, 4])
+  return(result)
+}
+
+# save the timepoint.da output and add asv, p.adj values to it, and ultimately taxonomny info
+timepoint.da.models <- lapply(timepoint.da$significant_models, extractmods)
+names(timepoint.da.models) <- timepoint.da$significant_taxa
+
+# Add ASVs to the taxonomy table and save the significant asvs
+tax_table(psS)[,7] <- rownames(tax_table(psS))
+sig.taxonomy.timepoint <- as.data.frame(tax_table(psS)[timepoint.da$significant_taxa,]) 
+
+# Move the data from a list to a dataframe and add taxonomy info
+timepoint.da.models.df <- ldply(timepoint.da.models, data.frame) %>% 
+  left_join(sig.taxonomy.timepoint, by = c(".id" = "sequence"))
+
+### Save these data so you don't have to re-run the model ###
+write.table(timepoint.da.models.df, "DA_ASV_timepoint_SSID.txt", sep="\t",row.names = FALSE)
+
+
+
+```

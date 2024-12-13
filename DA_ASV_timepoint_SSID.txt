@@ -1,0 +1,6 @@
+".id"	"Estimate"	"Std.Error"	"p"	"Kingdom"	"Phylum"	"Class"	"Order"	"Family"	"Genus"
+"ASV18"	4.34959453321253	1.67265463837575	0.0232081889155244	"Bacteria"	"Firmicutes"	"Clostridia"	"Peptostreptococcales-Tissierellales"	"Fusibacteraceae"	"Fusibacter"
+"ASV20"	4.77300640866439	2.1636215927224	0.0476189735121714	"Bacteria"	"Firmicutes"	"Clostridia"	"Peptostreptococcales-Tissierellales"	"Peptostreptococcales-Tissierellales"	"Peptostreptococcales-Tissierellales"
+"ASV28"	-3.81563916154463	0.981852634737832	0.00216359496026132	"Bacteria"	"Proteobacteria"	"Gammaproteobacteria"	"Pseudomonadales"	"Endozoicomonadaceae"	"Endozoicomonas"
+"ASV104"	-4.27091039407153	1.17850927802593	0.00348892336066904	"Bacteria"	"Proteobacteria"	"Gammaproteobacteria"	"Pseudomonadales"	"SAR86 clade"	"SAR86 clade"
+"ASV134"	-5.65405229798752	1.37783357279973	0.00146296260849654	"Bacteria"	"SAR324 clade(Marine group B)"	"SAR324 clade(Marine group B)"	"SAR324 clade(Marine group B)"	"SAR324 clade(Marine group B)"	"SAR324 clade(Marine group B)"
