@@ -14,15 +14,91 @@ library(pairwiseAdonis)
 writeLines(capture.output(sessionInfo()), "sessionInfo.txt")
 ```
 
-## R Markdown
+## Perform center-log-ratio transformation on ASVs and calculate Aitchison Distance and principal components
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r, echo=FALSE}
 
+otu <- read.table("Tent_Expm_silva_nochloronomito_otu_table.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("Tent_Expm_silva_nochloronomito_taxa_table.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("Tent_Expm_metadata.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+               sample_data(samples), 
+               tax_table(taxon))
+ps # 11845 taxa and 96 samples
 
+
+# remove low abundance taxa
+ps2<-filter_taxa(ps, function(x) mean(x) >1, TRUE) 
+ps2 # 1145 taxa and 96 samples
+otu = as(otu_table(ps2), "matrix")
+taxon = as(tax_table(ps2), "matrix")
+write.table(taxon,"Tent_Expm_silva_nochloronomito_taxa_table_ps2.txt",sep="\t",col.names=NA)
+write.table(otu, "Tent_Expm_silva_nochloronomito_otu_table_ps2.txt",sep="\t",col.names=NA)
+
+# clear and read back in prepared data; analysis is performed on the otu table (not the phyloseq object)
+otu <- read.table("Tent_Expm_silva_nochloronomito_otu_table_ps2.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("Tent_Expm_silva_nochloronomito_taxa_table_ps2.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("Tent_Expm_metadata.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps2 <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+               sample_data(samples), 
+               tax_table(taxon))
+ps2 # 1145 taxa and 96 samples
+
+# First, replace 0 values with an estimate (because normalization is taking log, can't have 0)
+# Also transposing here, need samples as rows
+d.czm <- cmultRepl(t(otu), method="CZM", label=0, z.warning=1)
+# Perform the center-log-ratio (CLR) transformation 
+d.clr <- codaSeq.clr(d.czm)
+# transpose matrix of CLR transformed data for ordination and dendrogram
+E.clr <- t(d.clr)
+# plot compositional PCA biplot (perform a singular value decomposition)
+d.pcx <- prcomp(E.clr)
+# calculate percent variance explained for the axis labels
+pc1 <- round(d.pcx$sdev[1]^2/sum(d.pcx$sdev^2),2)
+pc2 <- round(d.pcx$sdev[2]^2/sum(d.pcx$sdev^2),2)
+xlab <- paste("PC1: ", pc1, sep="")
+ylab <- paste("PC2: ", pc2, sep="")
+#biplot(d.pcx, cex=c(0.6,0.4), var.axes=F,scale=1, xlab=xlab, ylab=ylab)
+summary(d.pcx)
+str(d.pcx)
+screeplot(d.pcx)
+
+# replot PCA with ggplot2 (showing samples only)
+df_out <- as.data.frame(d.pcx$x)
+theme_set(theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank()))
+cols<-c("fully closed"="#332288","partially closed"="#E69F00","open"="#117733") #Navy and green from tol_eight, mustard from wong_eight
+samples$Tent.treatment<-factor(samples$Tent.treatment,levels=c("fully closed","partially closed","open"))
+samples$Expm.status<-factor(samples$Expm.status,levels=c("before","after","recovery"))
+
+pdf("PCA_76.pdf",bg ="white",width = 8.5)
+p<-ggplot(df_out,aes(x=PC1,y=PC2,color=samples$Tent.treatment,shape=samples$Species))
+p<-p+geom_point(size=2)+
+  theme(axis.title = element_text(size=14))+
+  theme(axis.text=element_text(size=12))+
+  theme(legend.title = element_text(size=14))+
+  theme(legend.text = element_text(size=12))+
+  theme(strip.text.x = element_text(size=12))+
+  scale_color_manual(values=cols)+
+  guides(fill = guide_legend(override.aes=list(shape=21)))+
+  facet_grid(~samples$Expm.status)
+p + labs(x=xlab, y=ylab, color="Treatment",shape="Coral species") +coord_fixed()
+dev.off()
+
+####### Perform permanova using Aitchison distance
+dist.clr <- dist(E.clr)
+perm<-adonis2(dist.clr~Tent.treatment*Expm.status*Species,as(sample_data(ps2),"data.frame"))
+print(perm)
+perm2<-pairwise.adonis2(dist.clr~Tent.treatment*Expm.status/Species,as(sample_data(ps2),"data.frame"), strata='Species')
+print(perm2)
 
 
 ```

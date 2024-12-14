@@ -1,97 +1,97 @@
 Sample ID	Species	Tent treatment	Expm status	Colony	Collection date	Sequences
-tnt1	Aten	FT	Bef	24	8/6/2022	Y
-tnt2	Ssid	FT	Bef	12	8/6/2022	Y
-tnt3	Ssid	FT	Aft	4	8/13/2022	Y
-tnt4	Ssid	FT	Aft	16	8/13/2022	Y
-tnt5	Aten	P	Aft	28	8/9/2022	Y
-tnt6	Aten	P	Rec	8	8/12/2022	Y
-tnt7	Ssid	FT	Rec	20	8/12/2022	Y
-tnt8	Ssid	P	Rec	32	8/16/2022	Y
-tnt9	Aten	P	Bef	11	8/6/2022	Y
-tnt10	Ssid	P	Bef	23	8/6/2022	Y
-tnt11	Aten	O	Aft	3	8/9/2022	Y
-tnt12	Ssid	P	Aft	15	8/13/2022	Y
-tnt13	Ssid	FT	Aft	27	8/13/2022	Y
-tnt14	Ssid	O	Rec	7	8/12/2022	Y
-tnt15	Ssid	O	Rec	19	8/12/2022	Y
-tnt16	Ssid	FT	Rec	31	8/12/2022	Y
-tnt17	Aten	O	Bef	10	8/6/2022	Y
-tnt18	Ssid	O	Aft	14	8/13/2022	Y
-tnt19	Aten	P	Bef	22	8/6/2022	Y
-tnt20	Aten	P	Aft	2	8/9/2022	Y
-tnt21	Aten	O	Aft	26	8/9/2022	Y
-tnt22	Ssid	P	Rec	6	8/16/2022	Y
-tnt23	Aten	FT	Rec	18	8/12/2022	Y
-tnt24	Aten	FT	Rec	30	8/12/2022	Y
-tnt25	Aten	O	Bef	21	8/6/2022	Y
-tnt26	Ssid	P	Bef	9	8/6/2022	Y
-tnt27	Ssid	O	Aft	25	8/13/2022	Y
-tnt28	Aten	FT	Rec	5	8/12/2022	Y
-tnt29	Aten	O	Rec	17	8/12/2022	Y
-tnt30	Ssid	O	Rec	29	8/16/2022	Y
-tnt31	Aten	FT	Aft	1	8/9/2022	Y
-tnt32	Ssid	FT	Rec	16	8/9/2022	Y
-tnt33	Ssid	FT	Rec	4	8/12/2022	Y
-tnt34	Ssid	FT	Aft	12	8/13/2022	Y
-tnt35	Ssid	P	Bef	32	8/6/2022	Y
-tnt36	Ssid	FT	Bef	20	8/6/2022	Y
-tnt37	Aten	FT	Aft	13	8/9/2022	Y
-tnt38	Aten	P	Bef	8	8/6/2022	Y
-tnt39	Aten	FT	Aft	24	8/9/2022	Y
-tnt40	Aten	P	Rec	28	8/12/2022	Y
-tnt41	Ssid	FT	Rec	27	8/12/2022	Y
-tnt42	Ssid	O	Bef	1	8/6/2022	Y
-tnt43	Ssid	O	Bef	19	8/6/2022	Y
-tnt44	Ssid	FT	Bef	31	8/6/2022	Y
-tnt45	Aten	O	Rec	3	8/12/2022	Y
-tnt46	Ssid	P	Aft	23	8/13/2022	Y
-tnt47	Aten	P	Aft	11	8/9/2022	Y
-tnt48	Aten	O	Aft	10	8/9/2022	Y
-tnt49	Aten	FT	Bef	18	8/6/2022	Y
-tnt50	Aten	FT	Bef	30	8/6/2022	Y
-tnt51	Ssid	P	Bef	6	8/6/2022	Y
-tnt52	Ssid	P	Aft	9	8/13/2022	Y
-tnt53	Ssid	O	Rec	14	8/13/2022	Y
-tnt54	Ssid	P	Rec	15	8/12/2022	Y
-tnt55	Ssid	O	Bef	29	8/6/2022	Y
-tnt56	Aten	O	Rec	26	8/12/2022	Y
-tnt57	Aten	P	Rec	2	8/12/2022	Y
-tnt58	Aten	O	Bef	17	8/6/2022	Y
-tnt59	Aten	O	Aft	21	8/9/2022	Y
-tnt60	Aten	P	Aft	22	8/9/2022	Y
-tnt61	Aten	FT	Bef	5	8/6/2022	Y
-tnt62	Aten	FT	Rec	13	8/12/2022	Y
-tnt63	Aten	FT	Rec	1	8/12/2022	Y
-tnt64	Aten	P	Bef	28	8/6/2022	Y
-tnt65	Aten	P	Aft	8	8/9/2022	Y
-tnt66	Aten	FT	Rec	24	8/12/2022	Y
-tnt67	Aten	P	Rec	11	8/12/2022	Y
-tnt68	Aten	P	Bef	2	8/6/2022	Y
-tnt69	Aten	O	Bef	3	8/6/2022	Y
-tnt70	Aten	FT	Aft	30	8/9/2022	Y
-tnt71	Aten	FT	Aft	18	8/9/2022	Y
-tnt72	Aten	O	Bef	26	8/6/2022	Y
-tnt73	Aten	O	Aft	17	8/9/2022	Y
-tnt74	Aten	FT	Aft	5	8/9/2022	Y
-tnt75	Aten	FT	Bef	1	8/6/2022	Y
-tnt76	Aten	FT	Bef	13	8/6/2022	Y
-tnt77	Aten	O	Rec	10	8/12/2022	Y
-tnt78	Aten	O	Rec	21	8/12/2022	Y
-tnt79	Aten	P	Rec	22	8/12/2022	Y
-tnt80	Ssid	P	Rec	9	8/12/2022	Y
-tnt81	Ssid	O	Aft	29	8/13/2022	Y
-tnt82	Ssid	O	Bef	25	8/6/2022	Y
-tnt83	Ssid	P	Aft	6	8/13/2022	Y
-tnt84	Ssid	O	Bef	14	8/6/2022	Y
-tnt85	Ssid	O	Rec	25	8/6/2022	Y
-tnt86	Ssid	FT	Bef	16	8/6/2022	Y
-tnt87	Ssid	FT	Bef	4	8/6/2022	Y
-tnt88	Ssid	FT	Rec	12	8/6/2022	Y
-tnt89	Ssid	P	Aft	32	8/13/2022	Y
-tnt90	Ssid	FT	Aft	20	8/13/2022	Y
-tnt91	Ssid	FT	Bef	21	8/6/2022	Y
-tnt92	Ssid	P	Bef	15	8/6/2022	Y
-tnt93	Ssid	P	Rec	23	8/6/2022	Y
-tnt94	Ssid	FT	Aft	31	8/13/2022	Y
-tnt95	Ssid	O	Aft	19	8/13/2022	Y
-tnt96	Ssid	O	Aft	1	8/13/2022	Y
+tnt1	Agaricia tenuifolia	fully closed	before	24	8/6/22	Y
+tnt2	Siderastrea siderea	fully closed	before	12	8/6/22	Y
+tnt3	Siderastrea siderea	fully closed	after	4	8/13/22	Y
+tnt4	Siderastrea siderea	fully closed	after	16	8/13/22	Y
+tnt5	Agaricia tenuifolia	partially closed	after	28	8/9/22	Y
+tnt6	Agaricia tenuifolia	partially closed	recovery	8	8/12/22	Y
+tnt7	Siderastrea siderea	fully closed	recovery	20	8/12/22	Y
+tnt8	Siderastrea siderea	partially closed	recovery	32	8/16/22	Y
+tnt9	Agaricia tenuifolia	partially closed	before	11	8/6/22	Y
+tnt10	Siderastrea siderea	partially closed	before	23	8/6/22	Y
+tnt11	Agaricia tenuifolia	open	after	3	8/9/22	Y
+tnt12	Siderastrea siderea	partially closed	after	15	8/13/22	Y
+tnt13	Siderastrea siderea	fully closed	after	27	8/13/22	Y
+tnt14	Siderastrea siderea	open	recovery	7	8/12/22	Y
+tnt15	Siderastrea siderea	open	recovery	19	8/12/22	Y
+tnt16	Siderastrea siderea	fully closed	recovery	31	8/12/22	Y
+tnt17	Agaricia tenuifolia	open	before	10	8/6/22	Y
+tnt18	Siderastrea siderea	open	after	14	8/13/22	Y
+tnt19	Agaricia tenuifolia	partially closed	before	22	8/6/22	Y
+tnt20	Agaricia tenuifolia	partially closed	after	2	8/9/22	Y
+tnt21	Agaricia tenuifolia	open	after	26	8/9/22	Y
+tnt22	Siderastrea siderea	partially closed	recovery	6	8/16/22	Y
+tnt23	Agaricia tenuifolia	fully closed	recovery	18	8/12/22	Y
+tnt24	Agaricia tenuifolia	fully closed	recovery	30	8/12/22	Y
+tnt25	Agaricia tenuifolia	open	before	21	8/6/22	Y
+tnt26	Siderastrea siderea	partially closed	before	9	8/6/22	Y
+tnt27	Siderastrea siderea	open	after	25	8/13/22	Y
+tnt28	Agaricia tenuifolia	fully closed	recovery	5	8/12/22	Y
+tnt29	Agaricia tenuifolia	open	recovery	17	8/12/22	Y
+tnt30	Siderastrea siderea	open	recovery	29	8/16/22	Y
+tnt31	Agaricia tenuifolia	fully closed	after	1	8/9/22	Y
+tnt32	Siderastrea siderea	fully closed	recovery	16	8/9/22	Y
+tnt33	Siderastrea siderea	fully closed	recovery	4	8/12/22	Y
+tnt34	Siderastrea siderea	fully closed	after	12	8/13/22	Y
+tnt35	Siderastrea siderea	partially closed	before	32	8/6/22	Y
+tnt36	Siderastrea siderea	fully closed	before	20	8/6/22	Y
+tnt37	Agaricia tenuifolia	fully closed	after	13	8/9/22	Y
+tnt38	Agaricia tenuifolia	partially closed	before	8	8/6/22	Y
+tnt39	Agaricia tenuifolia	fully closed	after	24	8/9/22	Y
+tnt40	Agaricia tenuifolia	partially closed	recovery	28	8/12/22	Y
+tnt41	Siderastrea siderea	fully closed	recovery	27	8/12/22	Y
+tnt42	Siderastrea siderea	open	before	1	8/6/22	Y
+tnt43	Siderastrea siderea	open	before	19	8/6/22	Y
+tnt44	Siderastrea siderea	fully closed	before	31	8/6/22	Y
+tnt45	Agaricia tenuifolia	open	recovery	3	8/12/22	Y
+tnt46	Siderastrea siderea	partially closed	after	23	8/13/22	Y
+tnt47	Agaricia tenuifolia	partially closed	after	11	8/9/22	Y
+tnt48	Agaricia tenuifolia	open	after	10	8/9/22	Y
+tnt49	Agaricia tenuifolia	fully closed	before	18	8/6/22	Y
+tnt50	Agaricia tenuifolia	fully closed	before	30	8/6/22	Y
+tnt51	Siderastrea siderea	partially closed	before	6	8/6/22	Y
+tnt52	Siderastrea siderea	partially closed	after	9	8/13/22	Y
+tnt53	Siderastrea siderea	open	recovery	14	8/13/22	Y
+tnt54	Siderastrea siderea	partially closed	recovery	15	8/12/22	Y
+tnt55	Siderastrea siderea	open	before	29	8/6/22	Y
+tnt56	Agaricia tenuifolia	open	recovery	26	8/12/22	Y
+tnt57	Agaricia tenuifolia	partially closed	recovery	2	8/12/22	Y
+tnt58	Agaricia tenuifolia	open	before	17	8/6/22	Y
+tnt59	Agaricia tenuifolia	open	after	21	8/9/22	Y
+tnt60	Agaricia tenuifolia	partially closed	after	22	8/9/22	Y
+tnt61	Agaricia tenuifolia	fully closed	before	5	8/6/22	Y
+tnt62	Agaricia tenuifolia	fully closed	recovery	13	8/12/22	Y
+tnt63	Agaricia tenuifolia	fully closed	recovery	1	8/12/22	Y
+tnt64	Agaricia tenuifolia	partially closed	before	28	8/6/22	Y
+tnt65	Agaricia tenuifolia	partially closed	after	8	8/9/22	Y
+tnt66	Agaricia tenuifolia	fully closed	recovery	24	8/12/22	Y
+tnt67	Agaricia tenuifolia	partially closed	recovery	11	8/12/22	Y
+tnt68	Agaricia tenuifolia	partially closed	before	2	8/6/22	Y
+tnt69	Agaricia tenuifolia	open	before	3	8/6/22	Y
+tnt70	Agaricia tenuifolia	fully closed	after	30	8/9/22	Y
+tnt71	Agaricia tenuifolia	fully closed	after	18	8/9/22	Y
+tnt72	Agaricia tenuifolia	open	before	26	8/6/22	Y
+tnt73	Agaricia tenuifolia	open	after	17	8/9/22	Y
+tnt74	Agaricia tenuifolia	fully closed	after	5	8/9/22	Y
+tnt75	Agaricia tenuifolia	fully closed	before	1	8/6/22	Y
+tnt76	Agaricia tenuifolia	fully closed	before	13	8/6/22	Y
+tnt77	Agaricia tenuifolia	open	recovery	10	8/12/22	Y
+tnt78	Agaricia tenuifolia	open	recovery	21	8/12/22	Y
+tnt79	Agaricia tenuifolia	partially closed	recovery	22	8/12/22	Y
+tnt80	Siderastrea siderea	partially closed	recovery	9	8/12/22	Y
+tnt81	Siderastrea siderea	open	after	29	8/13/22	Y
+tnt82	Siderastrea siderea	open	before	25	8/6/22	Y
+tnt83	Siderastrea siderea	partially closed	after	6	8/13/22	Y
+tnt84	Siderastrea siderea	open	before	14	8/6/22	Y
+tnt85	Siderastrea siderea	open	recovery	25	8/6/22	Y
+tnt86	Siderastrea siderea	fully closed	before	16	8/6/22	Y
+tnt87	Siderastrea siderea	fully closed	before	4	8/6/22	Y
+tnt88	Siderastrea siderea	fully closed	recovery	12	8/6/22	Y
+tnt89	Siderastrea siderea	partially closed	after	32	8/13/22	Y
+tnt90	Siderastrea siderea	fully closed	after	20	8/13/22	Y
+tnt91	Siderastrea siderea	fully closed	before	21	8/6/22	Y
+tnt92	Siderastrea siderea	partially closed	before	15	8/6/22	Y
+tnt93	Siderastrea siderea	partially closed	recovery	23	8/6/22	Y
+tnt94	Siderastrea siderea	fully closed	after	31	8/13/22	Y
+tnt95	Siderastrea siderea	open	after	19	8/13/22	Y
+tnt96	Siderastrea siderea	open	after	1	8/13/22	Y
