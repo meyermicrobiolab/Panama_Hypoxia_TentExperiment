@@ -93,6 +93,24 @@ p<-p+geom_point(size=2)+
 p + labs(x=xlab, y=ylab, color="Treatment",shape="Coral species") +coord_fixed()
 dev.off()
 
+
+pdf("PCA_76_v2.pdf",bg ="white",width = 8.5)
+p<-ggplot(df_out,aes(x=PC1,y=PC2,color=samples$Tent.treatment))
+p<-p+geom_point(size=2)+
+  theme(axis.title = element_text(size=14))+
+  theme(axis.text=element_text(size=12))+
+  theme(legend.title = element_text(size=14))+
+  theme(legend.text = element_text(size=12))+
+  theme(strip.text.x = element_text(size=12))+
+  scale_color_manual(values=cols)+
+  guides(fill = guide_legend(override.aes=list(shape=21)))+
+  facet_grid(samples$Species~samples$Expm.status)
+p + labs(x=xlab, y=ylab, color="Treatment") +coord_fixed()
+dev.off()
+
+
+
+
 ####### Perform permanova using Aitchison distance
 dist.clr <- dist(E.clr)
 perm<-adonis2(dist.clr~Tent.treatment*Expm.status*Species,as(sample_data(ps2),"data.frame"))
