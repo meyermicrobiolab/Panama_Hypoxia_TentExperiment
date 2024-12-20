@@ -31,7 +31,6 @@ ps <- phyloseq(otu_table(otu, taxa_are_rows=FALSE),
                tax_table(taxon))
 ps # 11845 taxa and 96 samples
 
-
 # remove low abundance taxa
 ps2<-filter_taxa(ps, function(x) mean(x) >1, TRUE) 
 ps2 # 1145 taxa and 96 samples
@@ -52,6 +51,40 @@ ps2 <- phyloseq(otu_table(otu, taxa_are_rows=FALSE),
                sample_data(samples), 
                tax_table(taxon))
 ps2 # 1145 taxa and 96 samples
+
+
+# separate coral species to plot alpha diversity
+ps2_A = subset_samples(ps2, Species == "Agaricia tenuifolia")
+ps2_S = subset_samples(ps2, Species == "Siderastrea siderea")
+
+
+alpha.diversityA <- estimate_richness(ps2_A, measures = c("Observed","Shannon","Simpson"))
+alpha.diversityA #table with values - use this data table to plot with ggplot
+
+# set asethetics
+samples$Expm.status<-factor(samples$Expm.status,levels=c("before","after","recovery"))
+
+
+prichA <- plot_richness(ps2_A, x = "Expm.status", measures = c("Observed", "Shannon", "Simpson"))
+pricha <- prichA + geom_boxplot(aes(fill = Expm.status), alpha=0.2)
+plot(prichA)
+
+# plot box and whiskers with points on top
+
+# pdf("kor.pdf", width=8,height=6)
+prichA <- ggplot(alpha.diversityA,aes(x,y))+ ### need to add metadata onto richness dataframe to define x and y
+  geom_boxplot(outlier.shape=NA)+
+  geom_jitter(aes(color=Expm.status))+
+  facet_grid(Measure~.)+ ### need to add metadata onto richness dataframe
+  theme(axis.title.x=element_blank())+
+  theme_bw()+
+  theme(text=element_text(size=14,face="bold"))+
+  ylab("copies of korormicin per ng DNA")+
+  scale_color_manual(values=palette)
+prichA
+#dev.off()
+
+
 
 # First, replace 0 values with an estimate (because normalization is taking log, can't have 0)
 # Also transposing here, need samples as rows
@@ -75,7 +108,7 @@ screeplot(d.pcx)
 # replot PCA with ggplot2 (showing samples only)
 df_out <- as.data.frame(d.pcx$x)
 theme_set(theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank()))
-cols<-c("fully closed"="#332288","partially closed"="#E69F00","open"="#117733") #Navy and green from tol_eight, mustard from wong_eight
+cols<-c("fully closed"="#D55E00","partially closed"="#0072B2","open"="#56B4E9") #colorblind friendly palette
 samples$Tent.treatment<-factor(samples$Tent.treatment,levels=c("fully closed","partially closed","open"))
 samples$Expm.status<-factor(samples$Expm.status,levels=c("before","after","recovery"))
 
