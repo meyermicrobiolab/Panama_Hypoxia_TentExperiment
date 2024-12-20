@@ -11,17 +11,12 @@ remove(list = ls())
 df <- read.csv(file = "survival_tent.csv")
 str(df)
 
-# Full Tent (Dark Blue), Partial Tent (Green) and Open Plot (Orange).
-# open= green
-# partial= orange
-# FT= blue
-
 # ordered: full, partial, open
 df$treatment <- ordered(df$treatment, levels = c("hypoxic", "tented_control", "control"))
 
 treat.labs <- c("fully closed", "partially closed", "open")
 names(treat.labs) <- c("hypoxic","tented_control", "control")
-treat_col <- c("darkblue", "#E69F00","#009E73")
+treat_col <- c("#D55E00", "#0072B2","#56B4E9") # from colorblind friendly palette
 
 spp.labs <- c("A. tenuifolia", "S. siderea")             
 names(spp.labs) <- c("A_tenuifolia", "S_siderea")
@@ -278,7 +273,7 @@ p_zoox <-  ggplot(df_zoox, aes(treatment, zoox, color = treatment)) +
   scale_x_discrete(labels =treat.labs) +
   scale_color_manual(values = treat_col, labels = treat.labs, name = "Treatment") +
   labs(x = "Treatment",   
-       y = expression(paste("Symbiodinium density (cells/cm"^2, ")"))) +
+       y = expression(paste("Symbiodiniaceae density (cells/cm"^2, ")"))) +
   theme(strip.text = element_text(face = "italic")) +
   theme(legend.position="bottom") +
   facet_grid(spp ~ ., scales = "free", 
