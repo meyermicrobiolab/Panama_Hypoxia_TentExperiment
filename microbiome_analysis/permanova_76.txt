@@ -1,0 +1,66 @@
+Permutation test for adonis under reduced model
+Terms added sequentially (first to last)
+Permutation: free
+Number of permutations: 999
+
+adonis2(formula = dist.clr ~ Tent.treatment * Expm.status * Species, data = as(sample_data(ps2), "data.frame"))
+                                   Df SumOfSqs      R2      F Pr(>F)    
+Tent.treatment                      2    19177 0.05701 3.1840  0.001 ***
+Expm.status                         2    12773 0.03797 2.1207  0.002 ** 
+Species                             1    18472 0.05491 6.1339  0.001 ***
+Tent.treatment:Expm.status          4    17577 0.05225 1.4592  0.009 ** 
+Tent.treatment:Species              2     6481 0.01927 1.0761  0.292    
+Expm.status:Species                 2    10653 0.03167 1.7687  0.004 ** 
+Tent.treatment:Expm.status:Species  4    16375 0.04868 1.3594  0.021 *  
+Residual                           78   234897 0.69825                  
+Total                              95   336406 1.00000                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+
+
+
+
+
+
+$parent_call
+[1] "dist.clr ~ Tent.treatment * Expm.status/Species , strata = Species , permutations 999"
+
+$`fully closed_vs_partially closed`
+                                   Df SumOfSqs      R2      F Pr(>F)    
+Tent.treatment                      1    11910 0.04824 3.6463  0.001 ***
+Expm.status                         2    14655 0.05935 2.2434  0.001 ***
+Tent.treatment:Expm.status          2    10521 0.04261 1.6105  0.017 *  
+Tent.treatment:Expm.status:Species  6    33444 0.13545 1.7066  0.023 *  
+Residual                           54   176376 0.71434                  
+Total                              65   246906 1.00000                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+$`fully closed_vs_open`
+                                   Df SumOfSqs      R2      F Pr(>F)    
+Tent.treatment                      1    12782 0.05134 4.0252  0.001 ***
+Expm.status                         2    14806 0.05947 2.3313  0.001 ***
+Tent.treatment:Expm.status          2    11306 0.04541 1.7802  0.017 *  
+Tent.treatment:Expm.status:Species  6    38576 0.15496 2.0246  0.003 ** 
+Residual                           54   171480 0.68881                  
+Total                              65   248951 1.00000                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+$`partially closed_vs_open`
+                                   Df SumOfSqs      R2      F Pr(>F)  
+Tent.treatment                      1     3522 0.02111 1.3865  0.119  
+Expm.status                         2     5298 0.03176 1.0428  0.343  
+Tent.treatment:Expm.status          2     4114 0.02466 0.8097  0.790  
+Tent.treatment:Expm.status:Species  6    31943 0.19149 2.0957  0.049 *
+Residual                           48   121938 0.73097                
+Total                              59   166815 1.00000                
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+attr(,"class")
+[1] "pwadstrata" "list"      
+
+
