@@ -1,0 +1,207 @@
+
+###################### SHANNON ##############################
+
+
+                    Df Sum Sq Mean Sq F value   Pr(>F)    
+Timepoint            2  4.056   2.028   3.772 0.031795 *  
+Treatment            2  9.406   4.703   8.747 0.000728 ***
+Timepoint:Treatment  4  2.141   0.535   0.995 0.421593    
+Residuals           39 20.969   0.538                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = Shannon ~ Timepoint + Treatment + Timepoint:Treatment, data = alphaA)
+
+$Timepoint
+                    diff        lwr         upr     p adj
+before-after  -0.7089210 -1.3405249 -0.07731723 0.0247925
+during-after  -0.4124046 -1.0440084  0.21919925 0.2616037
+during-before  0.2965165 -0.3350873  0.92812030 0.4934609
+
+$Treatment
+                                     diff        lwr        upr     p adj
+open-fully closed             -0.88359995 -1.5081465 -0.2590534 0.0038405
+partially closed-fully closed -0.94257563 -1.5671222 -0.3180291 0.0020082
+partially closed-open         -0.05897567 -0.7112933  0.5933419 0.9736265
+
+$`Timepoint:Treatment`
+                                                       diff        lwr         upr     p adj
+before:fully closed-after:fully closed          -1.08226561 -2.4715520  0.30702079 0.2378257
+during:fully closed-after:fully closed          -0.20588768 -1.5951741  1.18339873 0.9998975
+after:open-after:fully closed                   -0.79820818 -2.2553041  0.65888769 0.6832431
+before:open-after:fully closed                  -1.58090857 -3.0380044 -0.12381270 0.0247793
+during:open-after:fully closed                  -1.55983640 -3.0169323 -0.10274053 0.0280144
+after:partially closed-after:fully closed       -1.20591691 -2.6630128  0.25117896 0.1755034
+before:partially closed-after:fully closed      -1.39304516 -2.8501410  0.06405072 0.0705007
+during:partially closed-after:fully closed      -1.51691809 -2.9740140 -0.05982222 0.0358260
+during:fully closed-before:fully closed          0.87637793 -0.5129085  2.26566433 0.5070584
+after:open-before:fully closed                   0.28405742 -1.1730384  1.74115330 0.9992190
+before:open-before:fully closed                 -0.49864296 -1.9557388  0.95845291 0.9669905
+during:open-before:fully closed                 -0.47757079 -1.9346667  0.97952508 0.9744601
+after:partially closed-before:fully closed      -0.12365130 -1.5807472  1.33344457 0.9999986
+before:partially closed-before:fully closed     -0.31077955 -1.7678754  1.14631632 0.9985125
+during:partially closed-before:fully closed     -0.43465249 -1.8917484  1.02244339 0.9857182
+after:open-during:fully closed                  -0.59232051 -2.0494164  0.86477536 0.9145845
+before:open-during:fully closed                 -1.37502089 -2.8321168  0.08207498 0.0774515
+during:open-during:fully closed                 -1.35394872 -2.8110446  0.10314715 0.0863170
+after:partially closed-during:fully closed      -1.00002923 -2.4571251  0.45706664 0.3943034
+before:partially closed-during:fully closed     -1.18715748 -2.6442534  0.26993839 0.1906719
+during:partially closed-during:fully closed     -1.31103042 -2.7681263  0.14606545 0.1070566
+before:open-after:open                          -0.78270038 -2.3045874  0.73918662 0.7499934
+during:open-after:open                          -0.76162821 -2.2835152  0.76025879 0.7759125
+after:partially closed-after:open               -0.40770873 -1.9295957  1.11417828 0.9928779
+before:partially closed-after:open              -0.59483697 -2.1167240  0.92705003 0.9304769
+during:partially closed-after:open              -0.71870991 -2.2405969  0.80317709 0.8248551
+during:open-before:open                          0.02107217 -1.5008148  1.54295917 1.0000000
+after:partially closed-before:open               0.37499166 -1.1468953  1.89687866 0.9959394
+before:partially closed-before:open              0.18786341 -1.3340236  1.70975041 0.9999745
+during:partially closed-before:open              0.06399047 -1.4578965  1.58587748 1.0000000
+after:partially closed-during:open               0.35391949 -1.1679675  1.87580649 0.9972714
+before:partially closed-during:open              0.16679124 -1.3550958  1.68867824 0.9999898
+during:partially closed-during:open              0.04291830 -1.4789687  1.56480531 1.0000000
+before:partially closed-after:partially closed  -0.18712825 -1.7090152  1.33475876 0.9999753
+during:partially closed-after:partially closed  -0.31100118 -1.8328882  1.21088582 0.9989036
+during:partially closed-before:partially closed -0.12387294 -1.6457599  1.39801407 0.9999990
+
+
+
+
+
+###################### OBSERVED ##############################
+
+
+                    Df Sum Sq Mean Sq F value  Pr(>F)   
+Timepoint            2   1064   532.0   3.974 0.02687 * 
+Treatment            2   1781   890.4   6.651 0.00327 **
+Timepoint:Treatment  4   1137   284.3   2.123 0.09625 . 
+Residuals           39   5221   133.9                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = rank(Observed) ~ Timepoint + Treatment + Timepoint:Treatment, data = alphaA)
+
+$Timepoint
+               diff        lwr       upr     p adj
+before-after  -11.0 -20.966439 -1.033561 0.0276926
+during-after   -2.5 -12.466439  7.466439 0.8149220
+during-before   8.5  -1.466439 18.466439 0.1076703
+
+$Treatment
+                                    diff       lwr       upr     p adj
+open-fully closed             -11.311111 -21.16619 -1.456032 0.0213045
+partially closed-fully closed -13.577778 -23.43286 -3.722699 0.0049259
+partially closed-open          -2.266667 -12.55996  8.026627 0.8538964
+
+$`Timepoint:Treatment`
+                                                      diff       lwr        upr     p adj
+before:fully closed-after:fully closed          -19.166667 -41.08901  2.7556805 0.1281696
+during:fully closed-after:fully closed            4.000000 -17.92235 25.9223471 0.9995177
+after:open-after:fully closed                   -11.733333 -34.72568 11.2590183 0.7575605
+before:open-after:fully closed                  -20.733333 -43.72568  2.2590183 0.1055326
+during:open-after:fully closed                  -16.633333 -39.62568  6.3590183 0.3260321
+after:partially closed-after:fully closed       -14.933333 -37.92568  8.0590183 0.4680200
+before:partially closed-after:fully closed      -18.133333 -41.12568  4.8590183 0.2243373
+during:partially closed-after:fully closed      -22.833333 -45.82568  0.1590183 0.0528273
+during:fully closed-before:fully closed          23.166667   1.24432 45.0890138 0.0314442
+after:open-before:fully closed                    7.433333 -15.55902 30.4256850 0.9764886
+before:open-before:fully closed                  -1.566667 -24.55902 21.4256850 0.9999998
+during:open-before:fully closed                   2.533333 -20.45902 25.5256850 0.9999894
+after:partially closed-before:fully closed        4.233333 -18.75902 27.2256850 0.9994847
+before:partially closed-before:fully closed       1.033333 -21.95902 24.0256850 1.0000000
+during:partially closed-before:fully closed      -3.666667 -26.65902 19.3256850 0.9998221
+after:open-during:fully closed                  -15.733333 -38.72568  7.2590183 0.3982300
+before:open-during:fully closed                 -24.733333 -47.72568 -1.7409817 0.0268069
+during:open-during:fully closed                 -20.633333 -43.62568  2.3590183 0.1088812
+after:partially closed-during:fully closed      -18.933333 -41.92568  4.0590183 0.1802947
+before:partially closed-during:fully closed     -22.133333 -45.12568  0.8590183 0.0670197
+during:partially closed-during:fully closed     -26.833333 -49.82568 -3.8409817 0.0120781
+before:open-after:open                           -9.000000 -33.01473 15.0147281 0.9446395
+during:open-after:open                           -4.900000 -28.91473 19.1147281 0.9989155
+after:partially closed-after:open                -3.200000 -27.21473 20.8147281 0.9999543
+before:partially closed-after:open               -6.400000 -30.41473 17.6147281 0.9931198
+during:partially closed-after:open              -11.100000 -35.11473 12.9147281 0.8408651
+during:open-before:open                           4.100000 -19.91473 28.1147281 0.9997044
+after:partially closed-before:open                5.800000 -18.21473 29.8147281 0.9964583
+before:partially closed-before:open               2.600000 -21.41473 26.6147281 0.9999908
+during:partially closed-before:open              -2.100000 -26.11473 21.9147281 0.9999983
+after:partially closed-during:open                1.700000 -22.31473 25.7147281 0.9999997
+before:partially closed-during:open              -1.500000 -25.51473 22.5147281 0.9999999
+during:partially closed-during:open              -6.200000 -30.21473 17.8147281 0.9944325
+before:partially closed-after:partially closed   -3.200000 -27.21473 20.8147281 0.9999543
+during:partially closed-after:partially closed   -7.900000 -31.91473 16.1147281 0.9738882
+during:partially closed-before:partially closed  -4.700000 -28.71473 19.3147281 0.9991966
+
+
+
+
+
+###################### SIMPSON ##############################
+
+
+                    Df Sum Sq Mean Sq F value  Pr(>F)   
+Timepoint            2    694   346.9   2.240 0.11994   
+Treatment            2   1926   962.8   6.217 0.00453 **
+Timepoint:Treatment  4    553   138.3   0.893 0.47741   
+Residuals           39   6039   154.9                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = rank(Simpson) ~ Timepoint + Treatment + Timepoint:Treatment, data = alphaA)
+
+$Timepoint
+                 diff        lwr       upr     p adj
+before-after  -9.2500 -19.968997  1.468997 0.1024478
+during-after  -3.6875 -14.406497  7.031497 0.6818717
+during-before  5.5625  -5.156497 16.281497 0.4235315
+
+$Treatment
+                                   diff       lwr       upr     p adj
+open-fully closed             -12.66667 -23.26589 -2.067439 0.0159620
+partially closed-fully closed -13.46667 -24.06589 -2.867439 0.0099304
+partially closed-open          -0.80000 -11.87053 10.270532 0.9830646
+
+$`Timepoint:Treatment`
+                                                      diff        lwr       upr     p adj
+before:fully closed-after:fully closed          -10.666667 -34.244353 12.911019 0.8557496
+during:fully closed-after:fully closed            3.666667 -19.911019 27.244353 0.9998526
+after:open-after:fully closed                    -6.600000 -31.328486 18.128486 0.9930518
+before:open-after:fully closed                  -19.600000 -44.328486  5.128486 0.2189940
+during:open-after:fully closed                  -18.800000 -43.528486  5.928486 0.2655838
+after:partially closed-after:fully closed       -13.200000 -37.928486 11.528486 0.7117473
+before:partially closed-after:fully closed      -17.000000 -41.728486  7.728486 0.3920892
+during:partially closed-after:fully closed      -17.200000 -41.928486  7.528486 0.3766806
+during:fully closed-before:fully closed          14.333333  -9.244353 37.911019 0.5557846
+after:open-before:fully closed                    4.066667 -20.661819 28.795152 0.9997762
+before:open-before:fully closed                  -8.933333 -33.661819 15.795152 0.9549040
+during:open-before:fully closed                  -8.133333 -32.861819 16.595152 0.9739165
+after:partially closed-before:fully closed       -2.533333 -27.261819 22.195152 0.9999940
+before:partially closed-before:fully closed      -6.333333 -31.061819 18.395152 0.9947241
+during:partially closed-before:fully closed      -6.533333 -31.261819 18.195152 0.9935046
+after:open-during:fully closed                  -10.266667 -34.995152 14.461819 0.9048697
+before:open-during:fully closed                 -23.266667 -47.995152  1.461819 0.0790966
+during:open-during:fully closed                 -22.466667 -47.195152  2.261819 0.1004801
+after:partially closed-during:fully closed      -16.866667 -41.595152  7.861819 0.4025249
+before:partially closed-during:fully closed     -20.666667 -45.395152  4.061819 0.1664124
+during:partially closed-during:fully closed     -20.866667 -45.595152  3.861819 0.1577297
+before:open-after:open                          -13.000000 -38.828061 12.828061 0.7706178
+during:open-after:open                          -12.200000 -38.028061 13.628061 0.8246830
+after:partially closed-after:open                -6.600000 -32.428061 19.228061 0.9948038
+before:partially closed-after:open              -10.400000 -36.228061 15.428061 0.9186842
+during:partially closed-after:open              -10.600000 -36.428061 15.228061 0.9102960
+during:open-before:open                           0.800000 -25.028061 26.628061 1.0000000
+after:partially closed-before:open                6.400000 -19.428061 32.228061 0.9957805
+before:partially closed-before:open               2.600000 -23.228061 28.428061 0.9999947
+during:partially closed-before:open               2.400000 -23.428061 28.228061 0.9999972
+after:partially closed-during:open                5.600000 -20.228061 31.428061 0.9983292
+before:partially closed-during:open               1.800000 -24.028061 27.628061 0.9999997
+during:partially closed-during:open               1.600000 -24.228061 27.428061 0.9999999
+before:partially closed-after:partially closed   -3.800000 -29.628061 22.028061 0.9999029
+during:partially closed-after:partially closed   -4.000000 -29.828061 21.828061 0.9998572
+during:partially closed-before:partially closed  -0.200000 -26.028061 25.628061 1.0000000
+

@@ -70,9 +70,9 @@ samples <- tibble::rownames_to_column(samples, "sample")
 alpha_meta <- merge(alpha.diversity, samples, by="sample", all=TRUE)
 
 # set asethetics
-alpha_meta$Timepoint<-factor(alpha_meta$Timepoint,levels=c("before","after","recovery"))
+alpha_meta$Timepoint<-factor(alpha_meta$Timepoint,levels=c("before","during","after"))
 alpha_meta$Treatment<-factor(alpha_meta$Treatment,levels=c("fully closed","partially closed","open"))
-cols1<-c("before"="#009E73","after"="#CC79A7","open"="#999999") #colorblind friendly palette
+cols1<-c("before"="#009E73","during"="#CC79A7","after"="#999999") #colorblind friendly palette
 cols2<-c("fully closed"="#D55E00","partially closed"="#0072B2","open"="#56B4E9") #colorblind friendly palette
 
 # plot box and whiskers with points on top
@@ -179,8 +179,8 @@ TukeyHSD(anova5)
 
 # 2-way ANOVA on ranked data for non-normally distributed diversity measure - Simpson
 anova6 <- aov(rank(Simpson) ~ Timepoint + Treatment + Timepoint:Treatment, alphaS) 
-summary(anova3) 
-TukeyHSD(anova3)
+summary(anova6) 
+TukeyHSD(anova6)
 
 ```
 

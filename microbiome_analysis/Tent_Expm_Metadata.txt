@@ -1,97 +1,97 @@
-Sample ID	Species	Treatment	Timepoint	Colony	Collection date
+Sample	Species	Treatment	Timepoint	Colony	Collection date
 tnt1	Agaricia tenuifolia	fully closed	before	24	8/6/22
 tnt2	Siderastrea siderea	fully closed	before	12	8/6/22
-tnt3	Siderastrea siderea	fully closed	after	4	8/13/22
-tnt4	Siderastrea siderea	fully closed	after	16	8/13/22
-tnt5	Agaricia tenuifolia	partially closed	after	28	8/9/22
-tnt6	Agaricia tenuifolia	partially closed	recovery	8	8/12/22
-tnt7	Siderastrea siderea	fully closed	recovery	20	8/12/22
-tnt8	Siderastrea siderea	partially closed	recovery	32	8/16/22
+tnt3	Siderastrea siderea	fully closed	during	4	8/13/22
+tnt4	Siderastrea siderea	fully closed	during	16	8/13/22
+tnt5	Agaricia tenuifolia	partially closed	during	28	8/9/22
+tnt6	Agaricia tenuifolia	partially closed	after	8	8/12/22
+tnt7	Siderastrea siderea	fully closed	after	20	8/12/22
+tnt8	Siderastrea siderea	partially closed	after	32	8/16/22
 tnt9	Agaricia tenuifolia	partially closed	before	11	8/6/22
 tnt10	Siderastrea siderea	partially closed	before	23	8/6/22
-tnt11	Agaricia tenuifolia	open	after	3	8/9/22
-tnt12	Siderastrea siderea	partially closed	after	15	8/13/22
-tnt13	Siderastrea siderea	fully closed	after	27	8/13/22
-tnt14	Siderastrea siderea	open	recovery	7	8/12/22
-tnt15	Siderastrea siderea	open	recovery	19	8/12/22
-tnt16	Siderastrea siderea	fully closed	recovery	31	8/12/22
+tnt11	Agaricia tenuifolia	open	during	3	8/9/22
+tnt12	Siderastrea siderea	partially closed	during	15	8/13/22
+tnt13	Siderastrea siderea	fully closed	during	27	8/13/22
+tnt14	Siderastrea siderea	open	after	7	8/12/22
+tnt15	Siderastrea siderea	open	after	19	8/12/22
+tnt16	Siderastrea siderea	fully closed	after	31	8/12/22
 tnt17	Agaricia tenuifolia	open	before	10	8/6/22
-tnt18	Siderastrea siderea	open	after	14	8/13/22
+tnt18	Siderastrea siderea	open	during	14	8/13/22
 tnt19	Agaricia tenuifolia	partially closed	before	22	8/6/22
-tnt20	Agaricia tenuifolia	partially closed	after	2	8/9/22
-tnt21	Agaricia tenuifolia	open	after	26	8/9/22
-tnt22	Siderastrea siderea	partially closed	recovery	6	8/16/22
-tnt23	Agaricia tenuifolia	fully closed	recovery	18	8/12/22
-tnt24	Agaricia tenuifolia	fully closed	recovery	30	8/12/22
+tnt20	Agaricia tenuifolia	partially closed	during	2	8/9/22
+tnt21	Agaricia tenuifolia	open	during	26	8/9/22
+tnt22	Siderastrea siderea	partially closed	after	6	8/16/22
+tnt23	Agaricia tenuifolia	fully closed	after	18	8/12/22
+tnt24	Agaricia tenuifolia	fully closed	after	30	8/12/22
 tnt25	Agaricia tenuifolia	open	before	21	8/6/22
 tnt26	Siderastrea siderea	partially closed	before	9	8/6/22
-tnt27	Siderastrea siderea	open	after	25	8/13/22
-tnt28	Agaricia tenuifolia	fully closed	recovery	5	8/12/22
-tnt29	Agaricia tenuifolia	open	recovery	17	8/12/22
-tnt30	Siderastrea siderea	open	recovery	29	8/16/22
-tnt31	Agaricia tenuifolia	fully closed	after	1	8/9/22
-tnt32	Siderastrea siderea	fully closed	recovery	16	8/9/22
-tnt33	Siderastrea siderea	fully closed	recovery	4	8/12/22
-tnt34	Siderastrea siderea	fully closed	after	12	8/13/22
+tnt27	Siderastrea siderea	open	during	25	8/13/22
+tnt28	Agaricia tenuifolia	fully closed	after	5	8/12/22
+tnt29	Agaricia tenuifolia	open	after	17	8/12/22
+tnt30	Siderastrea siderea	open	after	29	8/16/22
+tnt31	Agaricia tenuifolia	fully closed	during	1	8/9/22
+tnt32	Siderastrea siderea	fully closed	after	16	8/9/22
+tnt33	Siderastrea siderea	fully closed	after	4	8/12/22
+tnt34	Siderastrea siderea	fully closed	during	12	8/13/22
 tnt35	Siderastrea siderea	partially closed	before	32	8/6/22
 tnt36	Siderastrea siderea	fully closed	before	20	8/6/22
-tnt37	Agaricia tenuifolia	fully closed	after	13	8/9/22
+tnt37	Agaricia tenuifolia	fully closed	during	13	8/9/22
 tnt38	Agaricia tenuifolia	partially closed	before	8	8/6/22
-tnt39	Agaricia tenuifolia	fully closed	after	24	8/9/22
-tnt40	Agaricia tenuifolia	partially closed	recovery	28	8/12/22
-tnt41	Siderastrea siderea	fully closed	recovery	27	8/12/22
+tnt39	Agaricia tenuifolia	fully closed	during	24	8/9/22
+tnt40	Agaricia tenuifolia	partially closed	after	28	8/12/22
+tnt41	Siderastrea siderea	fully closed	after	27	8/12/22
 tnt42	Siderastrea siderea	open	before	1	8/6/22
 tnt43	Siderastrea siderea	open	before	19	8/6/22
 tnt44	Siderastrea siderea	fully closed	before	31	8/6/22
-tnt45	Agaricia tenuifolia	open	recovery	3	8/12/22
-tnt46	Siderastrea siderea	partially closed	after	23	8/13/22
-tnt47	Agaricia tenuifolia	partially closed	after	11	8/9/22
-tnt48	Agaricia tenuifolia	open	after	10	8/9/22
+tnt45	Agaricia tenuifolia	open	after	3	8/12/22
+tnt46	Siderastrea siderea	partially closed	during	23	8/13/22
+tnt47	Agaricia tenuifolia	partially closed	during	11	8/9/22
+tnt48	Agaricia tenuifolia	open	during	10	8/9/22
 tnt49	Agaricia tenuifolia	fully closed	before	18	8/6/22
 tnt50	Agaricia tenuifolia	fully closed	before	30	8/6/22
 tnt51	Siderastrea siderea	partially closed	before	6	8/6/22
-tnt52	Siderastrea siderea	partially closed	after	9	8/13/22
-tnt53	Siderastrea siderea	open	recovery	14	8/13/22
-tnt54	Siderastrea siderea	partially closed	recovery	15	8/12/22
+tnt52	Siderastrea siderea	partially closed	during	9	8/13/22
+tnt53	Siderastrea siderea	open	after	14	8/13/22
+tnt54	Siderastrea siderea	partially closed	after	15	8/12/22
 tnt55	Siderastrea siderea	open	before	29	8/6/22
-tnt56	Agaricia tenuifolia	open	recovery	26	8/12/22
-tnt57	Agaricia tenuifolia	partially closed	recovery	2	8/12/22
+tnt56	Agaricia tenuifolia	open	after	26	8/12/22
+tnt57	Agaricia tenuifolia	partially closed	after	2	8/12/22
 tnt58	Agaricia tenuifolia	open	before	17	8/6/22
-tnt59	Agaricia tenuifolia	open	after	21	8/9/22
-tnt60	Agaricia tenuifolia	partially closed	after	22	8/9/22
+tnt59	Agaricia tenuifolia	open	during	21	8/9/22
+tnt60	Agaricia tenuifolia	partially closed	during	22	8/9/22
 tnt61	Agaricia tenuifolia	fully closed	before	5	8/6/22
-tnt62	Agaricia tenuifolia	fully closed	recovery	13	8/12/22
-tnt63	Agaricia tenuifolia	fully closed	recovery	1	8/12/22
+tnt62	Agaricia tenuifolia	fully closed	after	13	8/12/22
+tnt63	Agaricia tenuifolia	fully closed	after	1	8/12/22
 tnt64	Agaricia tenuifolia	partially closed	before	28	8/6/22
-tnt65	Agaricia tenuifolia	partially closed	after	8	8/9/22
-tnt66	Agaricia tenuifolia	fully closed	recovery	24	8/12/22
-tnt67	Agaricia tenuifolia	partially closed	recovery	11	8/12/22
+tnt65	Agaricia tenuifolia	partially closed	during	8	8/9/22
+tnt66	Agaricia tenuifolia	fully closed	after	24	8/12/22
+tnt67	Agaricia tenuifolia	partially closed	after	11	8/12/22
 tnt68	Agaricia tenuifolia	partially closed	before	2	8/6/22
 tnt69	Agaricia tenuifolia	open	before	3	8/6/22
-tnt70	Agaricia tenuifolia	fully closed	after	30	8/9/22
-tnt71	Agaricia tenuifolia	fully closed	after	18	8/9/22
+tnt70	Agaricia tenuifolia	fully closed	during	30	8/9/22
+tnt71	Agaricia tenuifolia	fully closed	during	18	8/9/22
 tnt72	Agaricia tenuifolia	open	before	26	8/6/22
-tnt73	Agaricia tenuifolia	open	after	17	8/9/22
-tnt74	Agaricia tenuifolia	fully closed	after	5	8/9/22
+tnt73	Agaricia tenuifolia	open	during	17	8/9/22
+tnt74	Agaricia tenuifolia	fully closed	during	5	8/9/22
 tnt75	Agaricia tenuifolia	fully closed	before	1	8/6/22
 tnt76	Agaricia tenuifolia	fully closed	before	13	8/6/22
-tnt77	Agaricia tenuifolia	open	recovery	10	8/12/22
-tnt78	Agaricia tenuifolia	open	recovery	21	8/12/22
-tnt79	Agaricia tenuifolia	partially closed	recovery	22	8/12/22
-tnt80	Siderastrea siderea	partially closed	recovery	9	8/12/22
-tnt81	Siderastrea siderea	open	after	29	8/13/22
+tnt77	Agaricia tenuifolia	open	after	10	8/12/22
+tnt78	Agaricia tenuifolia	open	after	21	8/12/22
+tnt79	Agaricia tenuifolia	partially closed	after	22	8/12/22
+tnt80	Siderastrea siderea	partially closed	after	9	8/12/22
+tnt81	Siderastrea siderea	open	during	29	8/13/22
 tnt82	Siderastrea siderea	open	before	25	8/6/22
-tnt83	Siderastrea siderea	partially closed	after	6	8/13/22
+tnt83	Siderastrea siderea	partially closed	during	6	8/13/22
 tnt84	Siderastrea siderea	open	before	14	8/6/22
-tnt85	Siderastrea siderea	open	recovery	25	8/6/22
+tnt85	Siderastrea siderea	open	after	25	8/6/22
 tnt86	Siderastrea siderea	fully closed	before	16	8/6/22
 tnt87	Siderastrea siderea	fully closed	before	4	8/6/22
-tnt88	Siderastrea siderea	fully closed	recovery	12	8/6/22
-tnt89	Siderastrea siderea	partially closed	after	32	8/13/22
-tnt90	Siderastrea siderea	fully closed	after	20	8/13/22
+tnt88	Siderastrea siderea	fully closed	after	12	8/6/22
+tnt89	Siderastrea siderea	partially closed	during	32	8/13/22
+tnt90	Siderastrea siderea	fully closed	during	20	8/13/22
 tnt91	Siderastrea siderea	fully closed	before	21	8/6/22
 tnt92	Siderastrea siderea	partially closed	before	15	8/6/22
-tnt93	Siderastrea siderea	partially closed	recovery	23	8/6/22
-tnt94	Siderastrea siderea	fully closed	after	31	8/13/22
-tnt95	Siderastrea siderea	open	after	19	8/13/22
-tnt96	Siderastrea siderea	open	after	1	8/13/22
+tnt93	Siderastrea siderea	partially closed	after	23	8/6/22
+tnt94	Siderastrea siderea	fully closed	during	31	8/13/22
+tnt95	Siderastrea siderea	open	during	19	8/13/22
+tnt96	Siderastrea siderea	open	during	1	8/13/22
