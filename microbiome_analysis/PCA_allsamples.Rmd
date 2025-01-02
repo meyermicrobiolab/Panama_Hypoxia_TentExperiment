@@ -9,8 +9,12 @@ output: html_document
 library(phyloseq)
 library(CoDaSeq)
 library(ggplot2)
+library(cowplot)
+library(tibble)
+library(dplyr)
 library(vegan)
 library(pairwiseAdonis)
+library(rstatix)
 writeLines(capture.output(sessionInfo()), "sessionInfo.txt")
 ```
 
@@ -51,41 +55,141 @@ ps2 <- phyloseq(otu_table(otu, taxa_are_rows=FALSE),
                sample_data(samples), 
                tax_table(taxon))
 ps2 # 1145 taxa and 96 samples
+```
 
+### ALPHA DIVERSITY
+1. Plot alpha diversity measures
 
-# separate coral species to plot alpha diversity
-ps2_A = subset_samples(ps2, Species == "Agaricia tenuifolia")
-ps2_S = subset_samples(ps2, Species == "Siderastrea siderea")
+```{r, echo=FALSE}
+# calculate alpha diversity measures with phyloseq wrapper
+alpha.diversity <- estimate_richness(ps2, measures = c("Observed","Shannon","Simpson"))
 
-
-alpha.diversityA <- estimate_richness(ps2_A, measures = c("Observed","Shannon","Simpson"))
-alpha.diversityA #table with values - use this data table to plot with ggplot
+# combine alpha diversity measures with sample metadata
+alpha.diversity <- tibble::rownames_to_column(alpha.diversity, "sample")
+samples <- tibble::rownames_to_column(samples, "sample")
+alpha_meta <- merge(alpha.diversity, samples, by="sample", all=TRUE)
 
 # set asethetics
-samples$Expm.status<-factor(samples$Expm.status,levels=c("before","after","recovery"))
-
-
-prichA <- plot_richness(ps2_A, x = "Expm.status", measures = c("Observed", "Shannon", "Simpson"))
-pricha <- prichA + geom_boxplot(aes(fill = Expm.status), alpha=0.2)
-plot(prichA)
+alpha_meta$Timepoint<-factor(alpha_meta$Timepoint,levels=c("before","after","recovery"))
+alpha_meta$Treatment<-factor(alpha_meta$Treatment,levels=c("fully closed","partially closed","open"))
+cols1<-c("before"="#009E73","after"="#CC79A7","open"="#999999") #colorblind friendly palette
+cols2<-c("fully closed"="#D55E00","partially closed"="#0072B2","open"="#56B4E9") #colorblind friendly palette
 
 # plot box and whiskers with points on top
 
-# pdf("kor.pdf", width=8,height=6)
-prichA <- ggplot(alpha.diversityA,aes(x,y))+ ### need to add metadata onto richness dataframe to define x and y
+obs <- ggplot(alpha_meta,aes(x=Timepoint,y=Observed,color=Timepoint))+
   geom_boxplot(outlier.shape=NA)+
-  geom_jitter(aes(color=Expm.status))+
-  facet_grid(Measure~.)+ ### need to add metadata onto richness dataframe
+  geom_jitter(aes(color=Treatment))+
+  facet_grid(Species~.)+
+  theme(strip.text.y=element_text(face="bold.italic"))+
+  theme(legend.position="none")+
   theme(axis.title.x=element_blank())+
-  theme_bw()+
   theme(text=element_text(size=14,face="bold"))+
-  ylab("copies of korormicin per ng DNA")+
-  scale_color_manual(values=palette)
-prichA
-#dev.off()
+  scale_color_manual(values=cols2)
+obs
+
+shan <- ggplot(alpha_meta,aes(x=Timepoint,y=Shannon,color=Timepoint))+
+  geom_boxplot(outlier.shape=NA)+
+  geom_jitter(aes(color=Treatment))+
+  facet_grid(Species~.)+
+  theme(strip.text.y=element_text(face="bold.italic"))+
+  theme(legend.position="none")+
+  theme(axis.title.x=element_blank())+
+  theme(text=element_text(size=14,face="bold"))+
+  scale_color_manual(values=cols2)
+shan
+
+simp <- ggplot(alpha_meta,aes(x=Timepoint,y=Simpson,color=Timepoint))+
+  geom_boxplot(outlier.shape=NA)+
+  geom_jitter(aes(color=Treatment))+
+  facet_grid(Species~.)+
+  theme(strip.text.y=element_text(face="bold.italic"))+
+  theme(legend.position="none")+
+  theme(axis.title.x=element_blank())+
+  theme(text=element_text(size=14,face="bold"))+
+  scale_color_manual(values=cols2)
+simp
+
+pdf("AlphaDiversity_96.pdf", bg ="white", width=8.5)
+plot_grid(obs,shan,simp, labels=c("A","B","C"), ncol=3)
+dev.off()
+
+# print plot for the legend
+pdf("Alpha+legend.pdf", bg ="white", width=8.5)
+obs2 <- ggplot(alpha_meta,aes(x=Timepoint,y=Observed,color=Timepoint))+
+  geom_boxplot(outlier.shape=NA)+
+  geom_jitter(aes(color=Treatment))+
+  facet_grid(Species~.)+
+  theme(strip.text.y=element_text(face="bold.italic"))+
+  theme(legend.position="bottom")+
+  theme(axis.title.x=element_blank())+
+  theme(text=element_text(size=14,face="bold"))+
+  theme(legend.title=element_blank())+
+  scale_color_manual(values=cols2)
+obs2
+dev.off()
+
+```
+
+### ALPHA DIVERSITY
+2. Test statistical differences in alpha diversity across time points and treatments
+
+```{r, echo=FALSE}
+# Test for statistical differences in alpha diversity between time points - test within species
+alphaA <- alpha_meta %>% filter(Species =='Agaricia tenuifolia')
+alphaS <- alpha_meta %>% filter(Species =='Siderastrea siderea')
+
+### Agaricia, all samples
+# First test for normality using Shapiro test. If the value of p is equal to or less than 0.05, 
+# then the hypothesis of normality will be rejected. 
+shapiro.test(alphaA$Observed) # p-value = 8.239e-09
+shapiro.test(alphaA$Shannon) # p-value = 0.2619
+shapiro.test(alphaA$Simpson) # p-value = 0.0006831
+# Only Shannon follows normality
+
+# 2-way ANOVA test for normally distributed diversity measure - Shannon diversity
+anova1 <- aov(Shannon ~ Timepoint + Treatment + Timepoint:Treatment, alphaA) 
+summary(anova1) 
+TukeyHSD(anova1)
+
+# 2-way ANOVA on ranked data for non-normally distributed diversity measures - Observed, Simpson
+anova2 <- aov(rank(Observed) ~ Timepoint + Treatment + Timepoint:Treatment, alphaA) 
+summary(anova2) 
+TukeyHSD(anova2)
+
+anova3 <- aov(rank(Simpson) ~ Timepoint + Treatment + Timepoint:Treatment, alphaA) 
+summary(anova3) 
+TukeyHSD(anova3)
 
 
+### Siderastrea, all samples
+shapiro.test(alphaS$Observed) # p-value = 0.7403
+shapiro.test(alphaS$Shannon) # p-value = 0.6582
+shapiro.test(alphaS$Simpson) # p-value = 3.318e-05
+# Both Observed and Shannon are normally distributed
 
+# 2-way ANOVA test for normally distributed diversity measures - Observed, Shannon
+anova4 <- aov(Observed ~ Timepoint + Treatment + Timepoint:Treatment, alphaS) 
+summary(anova4) 
+TukeyHSD(anova4)
+
+anova5 <- aov(Shannon ~ Timepoint + Treatment + Timepoint:Treatment, alphaS) 
+summary(anova5) 
+TukeyHSD(anova5)
+
+# 2-way ANOVA on ranked data for non-normally distributed diversity measure - Simpson
+anova6 <- aov(rank(Simpson) ~ Timepoint + Treatment + Timepoint:Treatment, alphaS) 
+summary(anova3) 
+TukeyHSD(anova3)
+
+```
+
+
+### BETA DIVERSITY
+
+
+```{r, echo=FALSE}
+# CALCULATE AITCHISON DISTANCE
 # First, replace 0 values with an estimate (because normalization is taking log, can't have 0)
 # Also transposing here, need samples as rows
 d.czm <- cmultRepl(t(otu), method="CZM", label=0, z.warning=1)
@@ -109,11 +213,11 @@ screeplot(d.pcx)
 df_out <- as.data.frame(d.pcx$x)
 theme_set(theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank()))
 cols<-c("fully closed"="#D55E00","partially closed"="#0072B2","open"="#56B4E9") #colorblind friendly palette
-samples$Tent.treatment<-factor(samples$Tent.treatment,levels=c("fully closed","partially closed","open"))
-samples$Expm.status<-factor(samples$Expm.status,levels=c("before","after","recovery"))
+samples$Treatment<-factor(samples$Treatment,levels=c("fully closed","partially closed","open"))
+samples$Timepoint<-factor(samples$Timepoint,levels=c("before","after","recovery"))
 
-pdf("PCA_76.pdf",bg ="white",width = 8.5)
-p<-ggplot(df_out,aes(x=PC1,y=PC2,color=samples$Tent.treatment,shape=samples$Species))
+pdf("PCA_96.pdf",bg ="white",width = 8.5)
+p<-ggplot(df_out,aes(x=PC1,y=PC2,color=samples$Treatment,shape=samples$Species))
 p<-p+geom_point(size=2)+
   theme(axis.title = element_text(size=14))+
   theme(axis.text=element_text(size=12))+
@@ -122,35 +226,33 @@ p<-p+geom_point(size=2)+
   theme(strip.text.x = element_text(size=12))+
   scale_color_manual(values=cols)+
   guides(fill = guide_legend(override.aes=list(shape=21)))+
-  facet_grid(~samples$Expm.status)
+  facet_grid(~samples$Timepoint)
 p + labs(x=xlab, y=ylab, color="Treatment",shape="Coral species") +coord_fixed()
 dev.off()
 
 
-pdf("PCA_76_v2.pdf",bg ="white",width = 8.5)
-p<-ggplot(df_out,aes(x=PC1,y=PC2,color=samples$Tent.treatment))
+pdf("PCA_96_facet.pdf",bg ="white",width = 8.5)
+p<-ggplot(df_out,aes(x=PC1,y=PC2,color=samples$Treatment))
 p<-p+geom_point(size=2)+
   theme(axis.title = element_text(size=14))+
   theme(axis.text=element_text(size=12))+
   theme(legend.title = element_text(size=14))+
   theme(legend.text = element_text(size=12))+
   theme(strip.text.x = element_text(size=12))+
+  theme(strip.text.y = element_text(size=12,face="italic"))+
   scale_color_manual(values=cols)+
   guides(fill = guide_legend(override.aes=list(shape=21)))+
-  facet_grid(samples$Species~samples$Expm.status)
+  facet_grid(samples$Species~samples$Timepoint)
 p + labs(x=xlab, y=ylab, color="Treatment") +coord_fixed()
 dev.off()
 
 
-
-
 ####### Perform permanova using Aitchison distance
 dist.clr <- dist(E.clr)
-perm<-adonis2(dist.clr~Tent.treatment*Expm.status*Species,as(sample_data(ps2),"data.frame"))
+perm<-adonis2(dist.clr~Treatment*Timepoint*Species,as(sample_data(ps2),"data.frame"))
 print(perm)
-perm2<-pairwise.adonis2(dist.clr~Tent.treatment*Expm.status/Species,as(sample_data(ps2),"data.frame"), strata='Species')
+perm2<-pairwise.adonis2(dist.clr~Treatment*Timepoint/Species,as(sample_data(ps2),"data.frame"), strata='Species')
 print(perm2)
-
 
 ```
 

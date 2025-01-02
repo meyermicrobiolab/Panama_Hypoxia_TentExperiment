@@ -1,0 +1,63 @@
+Permutation test for adonis under reduced model
+Terms added sequentially (first to last)
+Permutation: free
+Number of permutations: 999
+
+adonis2(formula = dist.clr ~ Treatment * Timepoint * Species, data = as(sample_data(ps2), "data.frame"))
+                            Df SumOfSqs      R2      F Pr(>F)    
+Treatment                    2    19177 0.05701 3.1840  0.001 ***
+Timepoint                    2    12773 0.03797 2.1207  0.002 ** 
+Species                      1    18472 0.05491 6.1339  0.001 ***
+Treatment:Timepoint          4    17577 0.05225 1.4592  0.012 *  
+Treatment:Species            2     6481 0.01927 1.0761  0.295    
+Timepoint:Species            2    10653 0.03167 1.7687  0.009 ** 
+Treatment:Timepoint:Species  4    16375 0.04868 1.3594  0.031 *  
+Residual                    78   234897 0.69825                  
+Total                       95   336406 1.00000                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+
+
+
+####################### PAIRWISE PERMANOVA ##########################
+
+$parent_call
+[1] "dist.clr ~ Treatment * Timepoint/Species , strata = Species , permutations 999"
+
+$`fully closed_vs_partially closed`
+                            Df SumOfSqs      R2      F Pr(>F)    
+Treatment                    1    11910 0.04824 3.6463  0.001 ***
+Timepoint                    2    14655 0.05935 2.2434  0.001 ***
+Treatment:Timepoint          2    10521 0.04261 1.6105  0.022 *  
+Treatment:Timepoint:Species  6    33444 0.13545 1.7066  0.024 *  
+Residual                    54   176376 0.71434                  
+Total                       65   246906 1.00000                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+$`fully closed_vs_open`
+                            Df SumOfSqs      R2      F Pr(>F)    
+Treatment                    1    12782 0.05134 4.0252  0.001 ***
+Timepoint                    2    14806 0.05947 2.3313  0.002 ** 
+Treatment:Timepoint          2    11306 0.04541 1.7802  0.016 *  
+Treatment:Timepoint:Species  6    38576 0.15496 2.0246  0.002 ** 
+Residual                    54   171480 0.68881                  
+Total                       65   248951 1.00000                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+$`partially closed_vs_open`
+                            Df SumOfSqs      R2      F Pr(>F)  
+Treatment                    1     3522 0.02111 1.3865  0.127  
+Timepoint                    2     5298 0.03176 1.0428  0.320  
+Treatment:Timepoint          2     4114 0.02466 0.8097  0.787  
+Treatment:Timepoint:Species  6    31943 0.19149 2.0957  0.070 .
+Residual                    48   121938 0.73097                
+Total                       59   166815 1.00000                
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+attr(,"class")
+[1] "pwadstrata" "list"      

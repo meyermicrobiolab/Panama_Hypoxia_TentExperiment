@@ -18,10 +18,10 @@ treat.labs <- c("fully closed", "partially closed", "open")
 names(treat.labs) <- c("hypoxic","tented_control", "control")
 treat_col <- c("#D55E00", "#0072B2","#56B4E9") # from colorblind friendly palette
 
-spp.labs <- c("A. tenuifolia", "S. siderea")             
+spp.labs <- c("Agaricia tenuifolia", "Siderastrea siderea")             
 names(spp.labs) <- c("A_tenuifolia", "S_siderea")
 
-day.labs <- c("Before (0h)","After (24h)", "Recovery (72h)")
+day.labs <- c("Before (0h)","During (24h)", "After (72h)")
 names(day.labs) <- c("Day_0", "Day_2", "Day_5")
 df$bleaching<-df$bleaching*100
 
@@ -145,7 +145,7 @@ Figure1 <- ggarrange(p_bleach, p_mort,
                      ncol= 2, nrow = 1,
                      labels = c("A)","B)"),
                      common.legend = TRUE, 
-                     legend = "bottom")
+                     legend = "none")
 
 Figure1
 
@@ -321,7 +321,7 @@ Figure2 <- ggarrange(p_zoox, p_pam,
                      ncol= 2, nrow = 1,
                      labels = c("A)","B)"),
                      common.legend = TRUE, 
-                     legend = "bottom")
+                     legend = "none")
 
 Figure2
 
@@ -351,7 +351,7 @@ p_smr <-  ggplot(df_smr, aes(treatment, SMR_umolO2_hr_cm2, color = treatment)) +
   scale_color_manual(values = treat_col, labels = treat.labs, name = "Treatment") +
   labs(x = "Treatment",   
        y = expression(paste("Oxygen consumption (O" [2], " h" ^-1, "cm"^2, ")"))) +
-  theme(legend.position="bottom") +
+  theme(legend.position="none") +
   theme(strip.text = element_text(face = "italic")) +
   facet_grid(. ~ spp, scales = "free", 
              labeller = labeller(spp = spp.labs)) 
