@@ -1,5 +1,5 @@
 ---
-title: "PCA"
+title: "Alpha and Beta diversity"
 author: "J. Meyer"
 date: "2024-12-12"
 output: html_document
