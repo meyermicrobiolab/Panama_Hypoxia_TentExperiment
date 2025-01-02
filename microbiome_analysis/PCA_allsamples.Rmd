@@ -182,6 +182,52 @@ anova6 <- aov(rank(Simpson) ~ Timepoint + Treatment + Timepoint:Treatment, alpha
 summary(anova6) 
 TukeyHSD(anova6)
 
+
+# Now test for statistical differences in alpha diversity between time points using only the fully closed tents
+alphaA_fc <- alphaA %>% filter(Treatment =='fully closed')
+alphaS_fc <- alphaS %>% filter(Treatment =='fully closed')
+
+### Agaricia, fully closed tents only
+shapiro.test(alphaA_fc$Observed) # p-value = 0.0292
+shapiro.test(alphaA_fc$Shannon) # p-value = 0.6784
+shapiro.test(alphaA_fc$Simpson) # p-value = 0.01907
+# observed and simpson normal
+
+# 1-way ANOVA test for normally distributed diversity measures - Observed and Simpson
+anova7 <- aov(Observed ~ Timepoint, alphaA_fc) 
+summary(anova7) 
+TukeyHSD(anova7)
+
+anova8 <- aov(Simpson ~ Timepoint, alphaA_fc) 
+summary(anova8) 
+TukeyHSD(anova8)
+
+# Kruskal-Wallis test for non-normally distributed diversity measure - Shannon
+krusk <- kruskal.test(Shannon ~ Timepoint, alphaA_fc)
+krusk # p-value = 0.01583
+pairwise.wilcox.test(alphaA_fc$Shannon, alphaA_fc$Timepoint, p.adjust.method="fdr")
+
+### Siderastrea, fully closed tents only
+shapiro.test(alphaS_fc$Observed) # p-value = 0.8046
+shapiro.test(alphaS_fc$Shannon) # p-value = 0.6931
+shapiro.test(alphaS_fc$Simpson) # p-value = 0.001973
+# observed and shannon normal
+
+# 1-way ANOVA test for normally distributed diversity measures - Observed and Shannon
+anova9 <- aov(Observed ~ Timepoint, alphaS_fc) 
+summary(anova9) 
+TukeyHSD(anova9)
+
+anova10 <- aov(Shannon ~ Timepoint, alphaS_fc) 
+summary(anova10) 
+TukeyHSD(anova10)
+
+# Kruskal-Wallis test for non-normally distributed diversity measure - Simpson
+krusk <- kruskal.test(Simpson ~ Timepoint, alphaS_fc)
+krusk # p-value = 0.02679
+pairwise.wilcox.test(alphaS_fc$Simpson, alphaS_fc$Timepoint, p.adjust.method="fdr")
+
+
 ```
 
 

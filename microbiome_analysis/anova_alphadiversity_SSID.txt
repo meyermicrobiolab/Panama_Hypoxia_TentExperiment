@@ -201,3 +201,65 @@ before:partially closed-after:partially closed    5.4 -20.149294 30.949294 0.998
 during:partially closed-after:partially closed   -7.8 -33.349294 17.749294 0.9834794
 during:partially closed-before:partially closed -13.2 -38.749294 12.349294 0.7454815
 
+
+
+
+########################## FULLY CLOSED TREATMENT ONLY #########################
+
+
+###################### OBSERVED ##############################
+            Df Sum Sq Mean Sq F value   Pr(>F)    
+Timepoint    2  61731   30866   11.64 0.000886 ***
+Residuals   15  39760    2651                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = Observed ~ Timepoint, data = alphaS_fc)
+
+$Timepoint
+                   diff        lwr       upr     p adj
+during-before 140.16667   62.95806 217.37527 0.0007596
+after-before   96.50000   19.29140 173.70860 0.0141219
+after-during  -43.66667 -120.87527  33.54194 0.3328986
+
+
+###################### SHANNON ##############################
+
+            Df Sum Sq Mean Sq F value Pr(>F)  
+Timepoint    2  6.875   3.438   6.072 0.0117 *
+Residuals   15  8.492   0.566                 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = Shannon ~ Timepoint, data = alphaS_fc)
+
+$Timepoint
+                    diff        lwr       upr     p adj
+during-before  1.5129136  0.3845478 2.6412793 0.0088129
+after-before   0.8020582 -0.3263075 1.9304239 0.1886791
+after-during  -0.7108554 -1.8392211 0.4175104 0.2615180
+
+
+
+
+###################### SIMPSON ##############################
+	Kruskal-Wallis rank sum test
+
+data:  Simpson by Timepoint
+Kruskal-Wallis chi-squared = 7.2398, df = 2, p-value = 0.02679
+
+
+	Pairwise comparisons using Wilcoxon rank sum exact test 
+
+data:  alphaS_fc$Simpson and alphaS_fc$Timepoint 
+
+       before during
+during 0.026  -     
+after  0.394  0.140 
+
+P value adjustment method: fdr 
+

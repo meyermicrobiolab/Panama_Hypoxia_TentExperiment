@@ -205,3 +205,64 @@ before:partially closed-after:partially closed   -3.800000 -29.628061 22.028061 
 during:partially closed-after:partially closed   -4.000000 -29.828061 21.828061 0.9998572
 during:partially closed-before:partially closed  -0.200000 -26.028061 25.628061 1.0000000
 
+
+
+
+######################## ONLY FULLY CLOSED TREATMENT ##################################
+
+
+###################### OBSERVED ##############################
+            Df Sum Sq Mean Sq F value Pr(>F)  
+Timepoint    2  51382   25691   5.713 0.0143 *
+Residuals   15  67448    4497                 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = Observed ~ Timepoint, data = alphaA_fc)
+
+$Timepoint
+                   diff       lwr      upr     p adj
+during-before  71.66667 -28.89417 172.2275 0.1872176
+after-before  130.66667  30.10583 231.2275 0.0109282
+after-during   59.00000 -41.56083 159.5608 0.3081603
+
+
+###################### SIMPSON ##############################
+
+            Df  Sum Sq Mean Sq F value Pr(>F)
+Timepoint    2 0.03264 0.01632   1.422  0.272
+Residuals   15 0.17217 0.01148               
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = Simpson ~ Timepoint, data = alphaA_fc)
+
+$Timepoint
+                     diff         lwr       upr     p adj
+during-before  0.10397976 -0.05668603 0.2646455 0.2444841
+after-before   0.05917892 -0.10148687 0.2198447 0.6141917
+after-during  -0.04480084 -0.20546663 0.1158649 0.7531775
+
+
+
+###################### SHANNON ##############################
+
+
+	Kruskal-Wallis rank sum test
+
+data:  Shannon by Timepoint
+Kruskal-Wallis chi-squared = 5.0994, df = 2, p-value = 0.0781
+
+
+	Pairwise comparisons using Wilcoxon rank sum exact test 
+
+data:  alphaA_fc$Shannon and alphaA_fc$Timepoint 
+
+       before during
+during 0.026  -     
+after  0.360  0.394 
+
+P value adjustment method: fdr 
+
