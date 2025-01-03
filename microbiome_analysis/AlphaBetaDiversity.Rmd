@@ -77,7 +77,7 @@ cols2<-c("fully closed"="#D55E00","partially closed"="#0072B2","open"="#56B4E9")
 
 # plot box and whiskers with points on top
 
-obs <- ggplot(alpha_meta,aes(x=Timepoint,y=Observed,color=Timepoint))+
+obs <- ggplot(alpha_meta,aes(x=Timepoint,y=Observed))+
   geom_boxplot(outlier.shape=NA)+
   geom_jitter(aes(color=Treatment))+
   facet_grid(Species~.)+
@@ -88,7 +88,7 @@ obs <- ggplot(alpha_meta,aes(x=Timepoint,y=Observed,color=Timepoint))+
   scale_color_manual(values=cols2)
 obs
 
-shan <- ggplot(alpha_meta,aes(x=Timepoint,y=Shannon,color=Timepoint))+
+shan <- ggplot(alpha_meta,aes(x=Timepoint,y=Shannon))+
   geom_boxplot(outlier.shape=NA)+
   geom_jitter(aes(color=Treatment))+
   facet_grid(Species~.)+
@@ -99,7 +99,7 @@ shan <- ggplot(alpha_meta,aes(x=Timepoint,y=Shannon,color=Timepoint))+
   scale_color_manual(values=cols2)
 shan
 
-simp <- ggplot(alpha_meta,aes(x=Timepoint,y=Simpson,color=Timepoint))+
+simp <- ggplot(alpha_meta,aes(x=Timepoint,y=Simpson))+
   geom_boxplot(outlier.shape=NA)+
   geom_jitter(aes(color=Treatment))+
   facet_grid(Species~.)+
@@ -110,13 +110,14 @@ simp <- ggplot(alpha_meta,aes(x=Timepoint,y=Simpson,color=Timepoint))+
   scale_color_manual(values=cols2)
 simp
 
+# plot that does not include legend
 pdf("AlphaDiversity_96.pdf", bg ="white", width=8.5)
 plot_grid(obs,shan,simp, labels=c("A","B","C"), ncol=3)
 dev.off()
 
 # print plot for the legend
 pdf("Alpha+legend.pdf", bg ="white", width=8.5)
-obs2 <- ggplot(alpha_meta,aes(x=Timepoint,y=Observed,color=Timepoint))+
+obs2 <- ggplot(alpha_meta,aes(x=Timepoint,y=Observed))+
   geom_boxplot(outlier.shape=NA)+
   geom_jitter(aes(color=Treatment))+
   facet_grid(Species~.)+
@@ -128,6 +129,50 @@ obs2 <- ggplot(alpha_meta,aes(x=Timepoint,y=Observed,color=Timepoint))+
   scale_color_manual(values=cols2)
 obs2
 dev.off()
+
+
+
+# Plot only the fully closed treatment
+alpha_fc <- alpha_meta %>% filter(Treatment =='fully closed')
+alpha_fc$Timepoint<-factor(alpha_fc$Timepoint,levels=c("before","during","after"))
+
+obs <- ggplot(alpha_fc,aes(x=Timepoint,y=Observed,color=Timepoint))+
+  geom_boxplot(outlier.shape=NA)+
+  geom_jitter()+
+  facet_grid(Species~.)+
+  theme(strip.text.y=element_text(face="bold.italic"))+
+  theme(legend.position="none")+
+  theme(axis.title.x=element_blank())+
+  theme(text=element_text(size=14,face="bold"))+
+  scale_color_manual(values=cols1)
+obs
+
+shan <- ggplot(alpha_meta,aes(x=Timepoint,y=Shannon,color=Timepoint))+
+  geom_boxplot(outlier.shape=NA)+
+  geom_jitter()+
+  facet_grid(Species~.)+
+  theme(strip.text.y=element_text(face="bold.italic"))+
+  theme(legend.position="none")+
+  theme(axis.title.x=element_blank())+
+  theme(text=element_text(size=14,face="bold"))+
+  scale_color_manual(values=cols1)
+shan
+
+simp <- ggplot(alpha_meta,aes(x=Timepoint,y=Simpson,color=Timepoint))+
+  geom_boxplot(outlier.shape=NA)+
+  geom_jitter()+
+  facet_grid(Species~.)+
+  theme(strip.text.y=element_text(face="bold.italic"))+
+  theme(legend.position="none")+
+  theme(axis.title.x=element_blank())+
+  theme(text=element_text(size=14,face="bold"))+
+  scale_color_manual(values=cols1)
+simp
+
+pdf("AlphaDiversity_fc.pdf", bg ="white", width=8.5)
+plot_grid(obs,shan,simp, labels=c("A","B","C"), ncol=3)
+dev.off()
+
 
 ```
 
@@ -260,7 +305,7 @@ df_out <- as.data.frame(d.pcx$x)
 theme_set(theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank()))
 cols<-c("fully closed"="#D55E00","partially closed"="#0072B2","open"="#56B4E9") #colorblind friendly palette
 samples$Treatment<-factor(samples$Treatment,levels=c("fully closed","partially closed","open"))
-samples$Timepoint<-factor(samples$Timepoint,levels=c("before","after","recovery"))
+samples$Timepoint<-factor(samples$Timepoint,levels=c("before","during","after"))
 
 pdf("PCA_96.pdf",bg ="white",width = 8.5)
 p<-ggplot(df_out,aes(x=PC1,y=PC2,color=samples$Treatment,shape=samples$Species))
