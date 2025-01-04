@@ -1,0 +1,68 @@
+---
+title: "RelAbundance"
+author: "JM"
+date: "2025-01-03"
+output: html_document
+---
+
+# Load in libraries
+
+```{r setup, include=FALSE}
+library(phyloseq)
+library(tibble)
+library(dplyr)
+library(ggplot2)
+```
+
+# Read in phyloseq object and prepare data for plotting
+
+```{r, echo=FALSE}
+otu <- read.table("Tent_Expm_silva_nochloronomito_otu_table_ps2.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("Tent_Expm_silva_nochloronomito_taxa_table_ps2.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("Tent_Expm_metadata.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps2 <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+               sample_data(samples), 
+               tax_table(taxon))
+ps2 # 1145 taxa and 96 samples
+
+# convert to relative abundance
+ps_ra<-transform_sample_counts(ps2, function(OTU) OTU/sum(OTU))
+ps_ra # 1145 taxa and 96 samples
+
+# Decide what taxonomic level to plot in heatmap and how to reduce number of taxa in figure
+get_taxa_unique(ps_ra, "Class") #60
+get_taxa_unique(ps_ra, "Order") #142
+get_taxa_unique(ps_ra, "Family") #232
+get_taxa_unique(ps_ra, "Genus") #387
+
+ps_ra_f = tax_glom(ps_ra, "Family")
+ps_ra_f # 232 taxa and 96 samples
+otu_f = as(otu_table(ps_ra_f), "matrix")
+taxon_f = as(tax_table(ps_ra_f), "matrix")
+fam<-t(otu_f)
+fam <- as.data.frame(fam)
+fam <- tibble::rownames_to_column(fam, "ASV")
+taxon_f <- as.data.frame(taxon_f)
+taxon_f <- tibble::rownames_to_column(taxon_f, "ASV")
+fam_tax <- merge(fam, taxon_f, by="ASV", all=FALSE)
+fam_tax$Genus<-NULL
+fam_tax$ASV<-NULL
+
+
+
+```
+
+# Plot heatmap
+
+```{r, echo=FALSE}
+
+# heatmap with ggplot
+# ggplot(data, aes(X, Y, fill= Z)) + geom_tile()
+
+
+```
+
