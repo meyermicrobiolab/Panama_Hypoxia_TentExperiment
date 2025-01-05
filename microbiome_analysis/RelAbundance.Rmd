@@ -11,6 +11,7 @@ output: html_document
 library(phyloseq)
 library(tibble)
 library(dplyr)
+library(reshape2)
 library(ggplot2)
 ```
 
@@ -39,6 +40,7 @@ get_taxa_unique(ps_ra, "Order") #142
 get_taxa_unique(ps_ra, "Family") #232
 get_taxa_unique(ps_ra, "Genus") #387
 
+# Plotting most abundant families - first collapse ASVs into families then reshape data for plotting
 ps_ra_f = tax_glom(ps_ra, "Family")
 ps_ra_f # 232 taxa and 96 samples
 otu_f = as(otu_table(ps_ra_f), "matrix")
@@ -51,8 +53,16 @@ taxon_f <- tibble::rownames_to_column(taxon_f, "ASV")
 fam_tax <- merge(fam, taxon_f, by="ASV", all=FALSE)
 fam_tax$Genus<-NULL
 fam_tax$ASV<-NULL
-
-
+# Order by total relative abundance and choose top 25 families
+fam_tax <- fam_tax %>% mutate("total" = rowSums((fam_tax[,1:96]), na.rm = TRUE))  
+fam_tax <- fam_tax[order(fam_tax$total, decreasing = TRUE),]
+fam25 <- fam_tax[1:25,]
+fam25$total<-NULL
+fam_long<-melt(fam25,value.name="proportion",variable.name="sample",id.vars=c("Kingdom","Phylum","Class","Order","Family"))
+# Merge with metadata for plotting aesthetics
+samples <- as.data.frame(samples)
+samples <- tibble::rownames_to_column(samples, "sample")
+famplot <- merge(fam_long,samples,by="sample", all=TRUE)
 
 ```
 
@@ -60,9 +70,65 @@ fam_tax$ASV<-NULL
 
 ```{r, echo=FALSE}
 
-# heatmap with ggplot
-# ggplot(data, aes(X, Y, fill= Z)) + geom_tile()
+famplot$Timepoint<-factor(famplot$Timepoint,levels=c("before","during","after"))
+# set order of families on y-axis based on sorted total abundance, list order: first in list = bottom of y-axis
+famplot$Family<-factor(famplot$Family,levels=c("Rhizobiaceae","Desulfosarcinaceae","Halieaceae","Gammaproteobacteria","Methylophagaceae","Pirellulaceae","Peptostreptococcales-Tissierellales","Alphaproteobacteria","Staphylococcaceae","Desulfovibrionaceae","Enterobacteriaceae","Pseudoalteromonadaceae","Nitrincolaceae","Rhodanobacteraceae","Proteobacteria","Vibrionaceae","Cyanobiaceae","Microbacteriaceae","Moraxellaceae","Arcobacteraceae","Rhodobacteraceae","Fusibacteraceae","Flavobacteriaceae","Bacteria","Endozoicomonadaceae"))
+# set order of samples, grouping by treatment: L to R = fully closed, partially closed, open
+famplot$sample<-factor(famplot$sample,levels=c("tnt1","tnt2","tnt3","tnt4","tnt7","tnt13","tnt16","tnt23","tnt24","tnt28","tnt31","tnt32","tnt33","tnt34","tnt36","tnt37","tnt39","tnt41","tnt44","tnt49","tnt50","tnt61","tnt62","tnt63","tnt66","tnt70","tnt71","tnt74","tnt75","tnt76","tnt86","tnt87","tnt88","tnt90","tnt91","tnt94","tnt5","tnt6","tnt8","tnt9","tnt10","tnt12","tnt19","tnt20","tnt22","tnt26","tnt35","tnt38","tnt40","tnt46","tnt47","tnt51","tnt52","tnt54","tnt57","tnt60","tnt64","tnt65","tnt67","tnt68","tnt79","tnt80","tnt83","tnt89","tnt92","tnt93","tnt11","tnt14","tnt15","tnt17","tnt18","tnt21","tnt25","tnt27","tnt29","tnt30","tnt42","tnt43","tnt45","tnt48","tnt53","tnt55","tnt56","tnt58","tnt59","tnt69","tnt72","tnt73","tnt77","tnt78","tnt81","tnt82","tnt84","tnt85","tnt95","tnt96"))
 
+# heatmap with ggplot, both coral species together
+p <- ggplot(famplot, aes(sample, Family, fill= proportion)) + geom_tile()+
+  facet_grid(.~Timepoint,scales="free",space="free")+
+  theme(axis.text.x=element_text(angle=90))+
+  #theme(axis.text.y=element_text(face="italic"))+
+  theme(axis.title.x=element_blank())+
+  theme(axis.title.y=element_blank())+
+  scale_fill_gradient(low="white", high="#004488")
+p
+
+
+# separate by coral species
+famplotA <- famplot %>% filter(Species =='Agaricia tenuifolia')
+# set order of samples, grouping by treatment: L to R = fully closed, partially closed, open
+# ATEN fully closed: "tnt1","tnt23","tnt24","tnt28","tnt31","tnt37","tnt39","tnt49","tnt50","tnt61","tnt62","tnt63","tnt66","tnt70","tnt71","tnt74","tnt75","tnt76"
+# ATEN partially closed: "tnt5","tnt6","tnt9","tnt19","tnt20","tnt38","tnt40","tnt47","tnt57","tnt60","tnt64","tnt65","tnt67","tnt68","tnt79"
+# ATEN open: "tnt11","tnt17","tnt21","tnt25","tnt29","tnt45","tnt48","tnt56","tnt58","tnt59","tnt69","tnt72","tnt73","tnt77","tnt78"
+
+famplotA$sample<-factor(famplotA$sample,levels=c("tnt1","tnt23","tnt24","tnt28","tnt31","tnt37","tnt39","tnt49","tnt50","tnt61","tnt62","tnt63","tnt66","tnt70","tnt71","tnt74","tnt75","tnt76","tnt5","tnt6","tnt9","tnt19","tnt20","tnt38","tnt40","tnt47","tnt57","tnt60","tnt64","tnt65","tnt67","tnt68","tnt79","tnt11","tnt17","tnt21","tnt25","tnt29","tnt45","tnt48","tnt56","tnt58","tnt59","tnt69","tnt72","tnt73","tnt77","tnt78"))
+
+
+famplotS <- famplot %>% filter(Species =='Siderastrea siderea')
+# set order of samples, grouping by treatment: L to R = fully closed, partially closed, open
+# SSID fully closed:"tnt2","tnt3","tnt4","tnt7","tnt13","tnt16","tnt32","tnt33","tnt34","tnt36","tnt41","tnt44","tnt86","tnt87","tnt88","tnt90","tnt91","tnt94"
+# SSID partially closed:"tnt8","tnt10","tnt12","tnt22","tnt26","tnt35","tnt46","tnt51","tnt52","tnt54","tnt80","tnt83","tnt89","tnt92","tnt93"
+# SSID open:"tnt14","tnt15","tnt18","tnt27","tnt30","tnt42","tnt43","tnt53","tnt55","tnt81","tnt82","tnt84","tnt85","tnt95","tnt96"
+
+famplotS$sample<-factor(famplotS$sample,levels=c("tnt2","tnt3","tnt4","tnt7","tnt13","tnt16","tnt32","tnt33","tnt34","tnt36","tnt41","tnt44","tnt86","tnt87","tnt88","tnt90","tnt91","tnt94","tnt8","tnt10","tnt12","tnt22","tnt26","tnt35","tnt46","tnt51","tnt52","tnt54","tnt80","tnt83","tnt89","tnt92","tnt93","tnt14","tnt15","tnt18","tnt27","tnt30","tnt42","tnt43","tnt53","tnt55","tnt81","tnt82","tnt84","tnt85","tnt95","tnt96"))
+
+pdf("Top25familiesA.pdf", bg ="white", width=8.5)
+pA <- ggplot(famplotA, aes(sample, Family, fill= proportion)) + geom_tile()+
+  facet_grid(.~Timepoint,scales="free",space="free")+
+  theme(axis.text.x=element_text(angle=90))+
+  theme(axis.text.y=element_text(face="italic"))+
+  theme(axis.title.x=element_blank())+
+  theme(axis.title.y=element_blank())+
+  scale_fill_gradient(low="white", high="#004488")
+pA
+dev.off()
+
+pdf("Top25familiesS.pdf", bg ="white", width=8.5)
+pS <- ggplot(famplotS, aes(sample, Family, fill= proportion)) + geom_tile()+
+  facet_grid(.~Timepoint,scales="free",space="free")+
+  theme(axis.text.x=element_text(angle=90))+
+  theme(axis.text.y=element_text(face="italic"))+
+  theme(axis.title.x=element_blank())+
+  theme(axis.title.y=element_blank())+
+  scale_fill_gradient(low="white", high="#004488")
+pS
+dev.off()
+
+# use inkscape to combine plots and indicate treatments on x-axis
+# I put the family names in italics for submission to an ASM journal (all Latin names in italics, not just genus/species)
 
 ```
 
