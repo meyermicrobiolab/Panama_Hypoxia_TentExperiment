@@ -80,7 +80,7 @@ ps1_class # 147 taxa (classes) and 36 samples
 ps1 # 4936 ASVs and 36 samples
 
 
-# DA determined relative to first reference level, so set this manually to the "none" treatment
+# DA determined relative to first reference level, so set this manually to the "before" treatment
 sample_data(ps1)$Expm.status<-factor(sample_data(ps1)$Expm.status,levels=c("Bef","Aft","Rec"))
 
 
@@ -107,7 +107,7 @@ extractmods <- function(model) {
   return(result)
 }
 
-# save the timepoint.da output and add asv, p.adj values to it, and ultimately taxonomny info
+# save the timepoint.da output and add asv, p.adj values to it, and ultimately taxonomy info
 timepoint.da.models <- lapply(timepoint.da$significant_models, extractmods)
 names(timepoint.da.models) <- timepoint.da$significant_taxa
 
@@ -118,7 +118,7 @@ sig.taxonomy.timepoint <- as.data.frame(tax_table(ps1)[timepoint.da$significant_
 # Move the data from a list to a dataframe and add taxonomy info
 timepoint.da.models.df <- ldply(timepoint.da.models, data.frame) %>% 
   left_join(sig.taxonomy.timepoint, by = c(".id" = "sequence")) %>%
-  mutate(genusasv = paste0(Genus, "_(", .id,")"))
+  mutate(family_asv = paste0(Family, "_(", .id,")"))
 
 ### Save these data so you don't have to re-run the model ###
 write.table(timepoint.da.models.df, "DA_ASV_timepoint.txt", sep="\t",row.names = FALSE)
