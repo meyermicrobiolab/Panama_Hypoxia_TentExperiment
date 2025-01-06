@@ -123,6 +123,11 @@ timepoint.da.models.df <- ldply(timepoint.da.models, data.frame) %>%
 ### Save these data so you don't have to re-run the model ###
 write.table(timepoint.da.models.df, "DA_ASV_timepoint.txt", sep="\t",row.names = FALSE)
 
+
+###### Create plot of 17 differentially abundant ASVs
+
+
+
 ```
 
 ### differentially abundant taxa: FAMILY LEVEL, BOTH CORAL SPECIES, FULL TENT ONLY
