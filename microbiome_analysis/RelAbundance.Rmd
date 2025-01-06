@@ -90,28 +90,24 @@ p
 # separate by coral species
 famplotA <- famplot %>% filter(Species =='Agaricia tenuifolia')
 # set order of samples, grouping by treatment: L to R = fully closed, partially closed, open
-# ATEN fully closed: "tnt1","tnt23","tnt24","tnt28","tnt31","tnt37","tnt39","tnt49","tnt50","tnt61","tnt62","tnt63","tnt66","tnt70","tnt71","tnt74","tnt75","tnt76"
-# ATEN partially closed: "tnt5","tnt6","tnt9","tnt19","tnt20","tnt38","tnt40","tnt47","tnt57","tnt60","tnt64","tnt65","tnt67","tnt68","tnt79"
-# ATEN open: "tnt11","tnt17","tnt21","tnt25","tnt29","tnt45","tnt48","tnt56","tnt58","tnt59","tnt69","tnt72","tnt73","tnt77","tnt78"
-
 famplotA$sample<-factor(famplotA$sample,levels=c("tnt1","tnt23","tnt24","tnt28","tnt31","tnt37","tnt39","tnt49","tnt50","tnt61","tnt62","tnt63","tnt66","tnt70","tnt71","tnt74","tnt75","tnt76","tnt5","tnt6","tnt9","tnt19","tnt20","tnt38","tnt40","tnt47","tnt57","tnt60","tnt64","tnt65","tnt67","tnt68","tnt79","tnt11","tnt17","tnt21","tnt25","tnt29","tnt45","tnt48","tnt56","tnt58","tnt59","tnt69","tnt72","tnt73","tnt77","tnt78"))
-
+famplotA$Timepoint<-factor(famplotA$Timepoint,levels=c("before","during","after"))
+famplotA$Family<-factor(famplotA$Family,levels=c("Rhizobiaceae","Desulfosarcinaceae","Halieaceae","Gammaproteobacteria","Methylophagaceae","Pirellulaceae","Peptostreptococcales-Tissierellales","Alphaproteobacteria","Staphylococcaceae","Desulfovibrionaceae","Enterobacteriaceae","Pseudoalteromonadaceae","Nitrincolaceae","Rhodanobacteraceae","Proteobacteria","Vibrionaceae","Cyanobiaceae","Microbacteriaceae","Moraxellaceae","Arcobacteraceae","Rhodobacteraceae","Fusibacteraceae","Flavobacteriaceae","Bacteria","Endozoicomonadaceae"))
 
 famplotS <- famplot %>% filter(Species =='Siderastrea siderea')
 # set order of samples, grouping by treatment: L to R = fully closed, partially closed, open
-# SSID fully closed:"tnt2","tnt3","tnt4","tnt7","tnt13","tnt16","tnt32","tnt33","tnt34","tnt36","tnt41","tnt44","tnt86","tnt87","tnt88","tnt90","tnt91","tnt94"
-# SSID partially closed:"tnt8","tnt10","tnt12","tnt22","tnt26","tnt35","tnt46","tnt51","tnt52","tnt54","tnt80","tnt83","tnt89","tnt92","tnt93"
-# SSID open:"tnt14","tnt15","tnt18","tnt27","tnt30","tnt42","tnt43","tnt53","tnt55","tnt81","tnt82","tnt84","tnt85","tnt95","tnt96"
-
 famplotS$sample<-factor(famplotS$sample,levels=c("tnt2","tnt3","tnt4","tnt7","tnt13","tnt16","tnt32","tnt33","tnt34","tnt36","tnt41","tnt44","tnt86","tnt87","tnt88","tnt90","tnt91","tnt94","tnt8","tnt10","tnt12","tnt22","tnt26","tnt35","tnt46","tnt51","tnt52","tnt54","tnt80","tnt83","tnt89","tnt92","tnt93","tnt14","tnt15","tnt18","tnt27","tnt30","tnt42","tnt43","tnt53","tnt55","tnt81","tnt82","tnt84","tnt85","tnt95","tnt96"))
+famplotS$Timepoint<-factor(famplotS$Timepoint,levels=c("before","during","after"))
+famplotS$Family<-factor(famplotS$Family,levels=c("Rhizobiaceae","Desulfosarcinaceae","Halieaceae","Gammaproteobacteria","Methylophagaceae","Pirellulaceae","Peptostreptococcales-Tissierellales","Alphaproteobacteria","Staphylococcaceae","Desulfovibrionaceae","Enterobacteriaceae","Pseudoalteromonadaceae","Nitrincolaceae","Rhodanobacteraceae","Proteobacteria","Vibrionaceae","Cyanobiaceae","Microbacteriaceae","Moraxellaceae","Arcobacteraceae","Rhodobacteraceae","Fusibacteraceae","Flavobacteriaceae","Bacteria","Endozoicomonadaceae"))
 
 pdf("Top25familiesA.pdf", bg ="white", width=8.5)
 pA <- ggplot(famplotA, aes(sample, Family, fill= proportion)) + geom_tile()+
   facet_grid(.~Timepoint,scales="free",space="free")+
   theme(axis.text.x=element_text(angle=90))+
-  theme(axis.text.y=element_text(face="italic"))+
+  theme(axis.text.y=element_text(size=12,face="italic"))+
   theme(axis.title.x=element_blank())+
   theme(axis.title.y=element_blank())+
+  theme(strip.text.y=element_text(size=12,face="bold"))+
   scale_fill_gradient(low="white", high="#004488")
 pA
 dev.off()
@@ -120,9 +116,10 @@ pdf("Top25familiesS.pdf", bg ="white", width=8.5)
 pS <- ggplot(famplotS, aes(sample, Family, fill= proportion)) + geom_tile()+
   facet_grid(.~Timepoint,scales="free",space="free")+
   theme(axis.text.x=element_text(angle=90))+
-  theme(axis.text.y=element_text(face="italic"))+
+  theme(axis.text.y=element_text(size=12,face="italic"))+
   theme(axis.title.x=element_blank())+
   theme(axis.title.y=element_blank())+
+  theme(strip.text.y=element_text(size=12,face="bold"))+
   scale_fill_gradient(low="white", high="#004488")
 pS
 dev.off()
