@@ -70,6 +70,7 @@ samples <- tibble::rownames_to_column(samples, "sample")
 alpha_meta <- merge(alpha.diversity, samples, by="sample", all=TRUE)
 
 # set asethetics
+theme_set(theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank()))
 alpha_meta$Timepoint<-factor(alpha_meta$Timepoint,levels=c("before","during","after"))
 alpha_meta$Treatment<-factor(alpha_meta$Treatment,levels=c("fully closed","partially closed","open"))
 cols1<-c("before"="#009E73","during"="#CC79A7","after"="#999999") #colorblind friendly palette
@@ -147,7 +148,7 @@ obs <- ggplot(alpha_fc,aes(x=Timepoint,y=Observed,color=Timepoint))+
   scale_color_manual(values=cols1)
 obs
 
-shan <- ggplot(alpha_meta,aes(x=Timepoint,y=Shannon,color=Timepoint))+
+shan <- ggplot(alpha_fc,aes(x=Timepoint,y=Shannon,color=Timepoint))+
   geom_boxplot(outlier.shape=NA)+
   geom_jitter()+
   facet_grid(Species~.)+
@@ -158,7 +159,7 @@ shan <- ggplot(alpha_meta,aes(x=Timepoint,y=Shannon,color=Timepoint))+
   scale_color_manual(values=cols1)
 shan
 
-simp <- ggplot(alpha_meta,aes(x=Timepoint,y=Simpson,color=Timepoint))+
+simp <- ggplot(alpha_fc,aes(x=Timepoint,y=Simpson,color=Timepoint))+
   geom_boxplot(outlier.shape=NA)+
   geom_jitter()+
   facet_grid(Species~.)+
