@@ -69,7 +69,7 @@ alpha.diversity <- tibble::rownames_to_column(alpha.diversity, "sample")
 samples <- tibble::rownames_to_column(samples, "sample")
 alpha_meta <- merge(alpha.diversity, samples, by="sample", all=TRUE)
 
-# set asethetics
+# set aesthetics
 theme_set(theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank()))
 alpha_meta$Timepoint<-factor(alpha_meta$Timepoint,levels=c("before","during","after"))
 alpha_meta$Treatment<-factor(alpha_meta$Treatment,levels=c("fully closed","partially closed","open"))

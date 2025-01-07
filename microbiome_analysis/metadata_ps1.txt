@@ -1,37 +1,37 @@
-""	"Species"	"Tent.treatment"	"Expm.status"	"Colony"	"Collection.date"	"Sequences"
-"tnt1"	"Aten"	"FT"	"Bef"	"24"	"8/6/2022"	"Y"
-"tnt13"	"Ssid"	"FT"	"Aft"	"27"	"8/13/2022"	"Y"
-"tnt16"	"Ssid"	"FT"	"Rec"	"31"	"8/12/2022"	"Y"
-"tnt2"	"Ssid"	"FT"	"Bef"	"12"	"8/6/2022"	"Y"
-"tnt23"	"Aten"	"FT"	"Rec"	"18"	"8/12/2022"	"Y"
-"tnt24"	"Aten"	"FT"	"Rec"	"30"	"8/12/2022"	"Y"
-"tnt28"	"Aten"	"FT"	"Rec"	" 5"	"8/12/2022"	"Y"
-"tnt3"	"Ssid"	"FT"	"Aft"	" 4"	"8/13/2022"	"Y"
-"tnt31"	"Aten"	"FT"	"Aft"	" 1"	"8/9/2022"	"Y"
-"tnt32"	"Ssid"	"FT"	"Rec"	"16"	"8/9/2022"	"Y"
-"tnt33"	"Ssid"	"FT"	"Rec"	" 4"	"8/12/2022"	"Y"
-"tnt34"	"Ssid"	"FT"	"Aft"	"12"	"8/13/2022"	"Y"
-"tnt36"	"Ssid"	"FT"	"Bef"	"20"	"8/6/2022"	"Y"
-"tnt37"	"Aten"	"FT"	"Aft"	"13"	"8/9/2022"	"Y"
-"tnt39"	"Aten"	"FT"	"Aft"	"24"	"8/9/2022"	"Y"
-"tnt4"	"Ssid"	"FT"	"Aft"	"16"	"8/13/2022"	"Y"
-"tnt41"	"Ssid"	"FT"	"Rec"	"27"	"8/12/2022"	"Y"
-"tnt44"	"Ssid"	"FT"	"Bef"	"31"	"8/6/2022"	"Y"
-"tnt49"	"Aten"	"FT"	"Bef"	"18"	"8/6/2022"	"Y"
-"tnt50"	"Aten"	"FT"	"Bef"	"30"	"8/6/2022"	"Y"
-"tnt61"	"Aten"	"FT"	"Bef"	" 5"	"8/6/2022"	"Y"
-"tnt62"	"Aten"	"FT"	"Rec"	"13"	"8/12/2022"	"Y"
-"tnt63"	"Aten"	"FT"	"Rec"	" 1"	"8/12/2022"	"Y"
-"tnt66"	"Aten"	"FT"	"Rec"	"24"	"8/12/2022"	"Y"
-"tnt7"	"Ssid"	"FT"	"Rec"	"20"	"8/12/2022"	"Y"
-"tnt70"	"Aten"	"FT"	"Aft"	"30"	"8/9/2022"	"Y"
-"tnt71"	"Aten"	"FT"	"Aft"	"18"	"8/9/2022"	"Y"
-"tnt74"	"Aten"	"FT"	"Aft"	" 5"	"8/9/2022"	"Y"
-"tnt75"	"Aten"	"FT"	"Bef"	" 1"	"8/6/2022"	"Y"
-"tnt76"	"Aten"	"FT"	"Bef"	"13"	"8/6/2022"	"Y"
-"tnt86"	"Ssid"	"FT"	"Bef"	"16"	"8/6/2022"	"Y"
-"tnt87"	"Ssid"	"FT"	"Bef"	" 4"	"8/6/2022"	"Y"
-"tnt88"	"Ssid"	"FT"	"Rec"	"12"	"8/6/2022"	"Y"
-"tnt90"	"Ssid"	"FT"	"Aft"	"20"	"8/13/2022"	"Y"
-"tnt91"	"Ssid"	"FT"	"Bef"	"21"	"8/6/2022"	"Y"
-"tnt94"	"Ssid"	"FT"	"Aft"	"31"	"8/13/2022"	"Y"
+Sample	Species	Treatment	Timepoint	Colony	Collection date
+tnt1	Agaricia tenuifolia	fully closed	before	24	8/6/22
+tnt13	Siderastrea siderea	fully closed	during	27	8/13/22
+tnt16	Siderastrea siderea	fully closed	after	31	8/12/22
+tnt2	Siderastrea siderea	fully closed	before	12	8/6/22
+tnt23	Agaricia tenuifolia	fully closed	after	18	8/12/22
+tnt24	Agaricia tenuifolia	fully closed	after	30	8/12/22
+tnt28	Agaricia tenuifolia	fully closed	after	5	8/12/22
+tnt3	Siderastrea siderea	fully closed	during	4	8/13/22
+tnt31	Agaricia tenuifolia	fully closed	during	1	8/9/22
+tnt32	Siderastrea siderea	fully closed	after	16	8/9/22
+tnt33	Siderastrea siderea	fully closed	after	4	8/12/22
+tnt34	Siderastrea siderea	fully closed	during	12	8/13/22
+tnt36	Siderastrea siderea	fully closed	before	20	8/6/22
+tnt37	Agaricia tenuifolia	fully closed	during	13	8/9/22
+tnt39	Agaricia tenuifolia	fully closed	during	24	8/9/22
+tnt4	Siderastrea siderea	fully closed	during	16	8/13/22
+tnt41	Siderastrea siderea	fully closed	after	27	8/12/22
+tnt44	Siderastrea siderea	fully closed	before	31	8/6/22
+tnt49	Agaricia tenuifolia	fully closed	before	18	8/6/22
+tnt50	Agaricia tenuifolia	fully closed	before	30	8/6/22
+tnt61	Agaricia tenuifolia	fully closed	before	5	8/6/22
+tnt62	Agaricia tenuifolia	fully closed	after	13	8/12/22
+tnt63	Agaricia tenuifolia	fully closed	after	1	8/12/22
+tnt66	Agaricia tenuifolia	fully closed	after	24	8/12/22
+tnt7	Siderastrea siderea	fully closed	after	20	8/12/22
+tnt70	Agaricia tenuifolia	fully closed	during	30	8/9/22
+tnt71	Agaricia tenuifolia	fully closed	during	18	8/9/22
+tnt74	Agaricia tenuifolia	fully closed	during	5	8/9/22
+tnt75	Agaricia tenuifolia	fully closed	before	1	8/6/22
+tnt76	Agaricia tenuifolia	fully closed	before	13	8/6/22
+tnt86	Siderastrea siderea	fully closed	before	16	8/6/22
+tnt87	Siderastrea siderea	fully closed	before	4	8/6/22
+tnt88	Siderastrea siderea	fully closed	after	12	8/6/22
+tnt90	Siderastrea siderea	fully closed	during	20	8/13/22
+tnt91	Siderastrea siderea	fully closed	before	21	8/6/22
+tnt94	Siderastrea siderea	fully closed	during	31	8/13/22

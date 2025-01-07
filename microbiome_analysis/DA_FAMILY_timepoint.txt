@@ -1,30 +1,30 @@
-.id	Estimate	Std.Error	p	Kingdom	Phylum	Class	Order	Family	Genus	genusasv
-ASV6	5.51476358	1.160861168	4.71E-05	Bacteria	Firmicutes	Clostridia	Peptostreptococcales-Tissierellales	Fusibacteraceae	NA	NA_(ASV6)
-ASV130	5.111954693	1.253782844	0.000308696	Bacteria	Bacteroidota	Bacteroidia	Sphingobacteriales	Lentimicrobiaceae	NA	NA_(ASV130)
-ASV226	4.404392341	1.541298968	0.007685527	Bacteria	Firmicutes	Bacilli	Izemoplasmatales	Izemoplasmatales	NA	NA_(ASV226)
-ASV20	4.329803882	1.449761042	0.005575081	Bacteria	Firmicutes	Clostridia	Peptostreptococcales-Tissierellales	Peptostreptococcales-Tissierellales	NA	NA_(ASV20)
-ASV16	3.98218592	0.877554644	8.56E-05	Bacteria	Campylobacterota	Campylobacteria	Campylobacterales	Arcobacteraceae	NA	NA_(ASV16)
-ASV25	3.473206278	0.796179179	0.000139896	Bacteria	Proteobacteria	Gammaproteobacteria	Pseudomonadales	Nitrincolaceae	NA	NA_(ASV25)
-ASV29	3.134962207	0.927654231	0.002030347	Bacteria	Desulfobacterota	Desulfovibrionia	Desulfovibrionales	Desulfovibrionaceae	NA	NA_(ASV29)
-ASV180	3.076031931	1.72369102	0.084449705	Bacteria	Patescibacteria	Gracilibacteria	Absconditabacteriales (SR1)	Absconditabacteriales (SR1)	NA	NA_(ASV180)
-ASV54	2.875664507	0.829742491	0.001617253	Bacteria	Bacteroidota	Bacteroidia	Bacteroidales	Marinifilaceae	NA	NA_(ASV54)
-ASV225	2.34096098	1.306269416	0.08320932	Bacteria	Firmicutes	Clostridia	Lachnospirales	Lachnospirales	NA	NA_(ASV225)
-ASV23	2.143468838	0.50018427	0.000173376	Bacteria	Proteobacteria	Gammaproteobacteria	Enterobacterales	Vibrionaceae	NA	NA_(ASV23)
-ASV5	0.588133603	1.029998972	0.572249893	Bacteria	Proteobacteria	Gammaproteobacteria	Enterobacterales	Pseudoalteromonadaceae	NA	NA_(ASV5)
-ASV74	0.268983217	0.841969633	0.751584981	Bacteria	Proteobacteria	Alphaproteobacteria	Rhizobiales	Rhizobiaceae	NA	NA_(ASV74)
-ASV69	-1.258221181	1.140231171	0.278592314	Bacteria	Bacteroidota	Bacteroidia	Chitinophagales	Saprospiraceae	NA	NA_(ASV69)
-ASV265	-2.392588247	2.102333612	0.264101637	Bacteria	Verrucomicrobiota	Lentisphaeria	Lentisphaerales	Lentisphaeraceae	NA	NA_(ASV265)
-ASV65	-2.511576119	0.815911891	0.004422606	Bacteria	SAR324 clade(Marine group B)	SAR324 clade(Marine group B)	SAR324 clade(Marine group B)	SAR324 clade(Marine group B)	NA	NA_(ASV65)
-ASV34	-2.86038966	0.442173055	3.79E-07	Bacteria	Cyanobacteria	Cyanobacteriia	Synechococcales	Cyanobiaceae	NA	NA_(ASV34)
-ASV30	-2.927727168	0.520638193	4.01E-06	Bacteria	Bacteria	Bacteria	Bacteria	Bacteria	NA	NA_(ASV30)
-ASV113	-2.987959989	0.625103314	4.33E-05	Bacteria	Proteobacteria	Gammaproteobacteria	Pseudomonadales	Moraxellaceae	NA	NA_(ASV113)
-ASV164	-3.321649888	0.83604157	0.00041116	Bacteria	Actinobacteriota	Acidimicrobiia	Actinomarinales	Actinomarinaceae	NA	NA_(ASV164)
-ASV382	-3.493656051	1.214118747	0.007316176	Bacteria	Actinobacteriota	Actinobacteria	Micrococcales	Micrococcaceae	NA	NA_(ASV382)
-ASV104	-3.750265336	0.904630892	0.000255526	Bacteria	Proteobacteria	Gammaproteobacteria	Pseudomonadales	SAR86 clade	NA	NA_(ASV104)
-ASV270	-4.04812562	1.151551348	0.001417729	Bacteria	Proteobacteria	Gammaproteobacteria	Pseudomonadales	Pseudomonadaceae	NA	NA_(ASV270)
-ASV198	-4.056336671	1.104230404	0.000928725	Bacteria	Proteobacteria	Alphaproteobacteria	SAR11 clade	Clade I	NA	NA_(ASV198)
-ASV365	-4.201219324	0.815534794	1.52E-05	Bacteria	Proteobacteria	Gammaproteobacteria	Xanthomonadales	Xanthomonadaceae	NA	NA_(ASV365)
-ASV71	-4.248612614	0.458481481	2.61E-10	Bacteria	Bacteroidota	Bacteroidia	Flavobacteriales	Flavobacteriaceae	NA	NA_(ASV71)
-ASV60	-4.50121512	1.732193934	0.014376112	Bacteria	Proteobacteria	Alphaproteobacteria	Rickettsiales	Fokiniaceae	NA	NA_(ASV60)
-ASV460	-4.555286847	1.338322143	0.001904809	Bacteria	Bacteroidota	Rhodothermia	Rhodothermales	Rhodothermaceae	NA	NA_(ASV460)
-ASV182	-4.928498503	1.29710946	0.000660273	Bacteria	Proteobacteria	Alphaproteobacteria	Puniceispirillales	SAR116 clade	NA	NA_(ASV182)
+"Estimate"	"Std.Error"	"p"	"Kingdom"	"Phylum"	"Class"	"Order"	"Family"
+5.51476357959515	1.16086116754305	4.70780247387169e-05	"Bacteria"	"Firmicutes"	"Clostridia"	"Peptostreptococcales-Tissierellales"	"Fusibacteraceae"
+5.11195469272107	1.2537828442175	0.000308696396986574	"Bacteria"	"Bacteroidota"	"Bacteroidia"	"Sphingobacteriales"	"Lentimicrobiaceae"
+4.40439234077749	1.54129896768367	0.0076855271464168	"Bacteria"	"Firmicutes"	"Bacilli"	"Izemoplasmatales"	"Izemoplasmatales"
+4.32980388165645	1.44976104184326	0.00557508079476691	"Bacteria"	"Firmicutes"	"Clostridia"	"Peptostreptococcales-Tissierellales"	"Peptostreptococcales-Tissierellales"
+3.98218592005643	0.877554644112294	8.56169482710503e-05	"Bacteria"	"Campylobacterota"	"Campylobacteria"	"Campylobacterales"	"Arcobacteraceae"
+3.47320627840321	0.796179178845555	0.000139895577454062	"Bacteria"	"Proteobacteria"	"Gammaproteobacteria"	"Pseudomonadales"	"Nitrincolaceae"
+3.13496220692448	0.927654231039306	0.00203034719810662	"Bacteria"	"Desulfobacterota"	"Desulfovibrionia"	"Desulfovibrionales"	"Desulfovibrionaceae"
+3.07603193122816	1.72369102023002	0.0844497050226396	"Bacteria"	"Patescibacteria"	"Gracilibacteria"	"Absconditabacteriales (SR1)"	"Absconditabacteriales (SR1)"
+2.87566450708514	0.829742490779143	0.00161725292644389	"Bacteria"	"Bacteroidota"	"Bacteroidia"	"Bacteroidales"	"Marinifilaceae"
+2.34096098047425	1.30626941630442	0.083209319916461	"Bacteria"	"Firmicutes"	"Clostridia"	"Lachnospirales"	"Lachnospirales"
+2.14346883809656	0.500184269699494	0.00017337644537971	"Bacteria"	"Proteobacteria"	"Gammaproteobacteria"	"Enterobacterales"	"Vibrionaceae"
+0.588133602801878	1.02999897193101	0.572249893283418	"Bacteria"	"Proteobacteria"	"Gammaproteobacteria"	"Enterobacterales"	"Pseudoalteromonadaceae"
+0.268983216823487	0.841969632688144	0.751584980523614	"Bacteria"	"Proteobacteria"	"Alphaproteobacteria"	"Rhizobiales"	"Rhizobiaceae"
+-1.25822118132594	1.14023117129939	0.278592313839967	"Bacteria"	"Bacteroidota"	"Bacteroidia"	"Chitinophagales"	"Saprospiraceae"
+-2.39258824735095	2.10233361249951	0.26410163689573	"Bacteria"	"Verrucomicrobiota"	"Lentisphaeria"	"Lentisphaerales"	"Lentisphaeraceae"
+-2.51157611903295	0.81591189056244	0.00442260561387682	"Bacteria"	"SAR324 clade(Marine group B)"	"SAR324 clade(Marine group B)"	"SAR324 clade(Marine group B)"	"SAR324 clade(Marine group B)"
+-2.86038965987162	0.442173055392353	3.78915425245068e-07	"Bacteria"	"Cyanobacteria"	"Cyanobacteriia"	"Synechococcales"	"Cyanobiaceae"
+-2.92772716807547	0.520638192522966	4.01173040721384e-06	"Bacteria"	"Bacteria"	"Bacteria"	"Bacteria"	"Bacteria"
+-2.98795998920918	0.625103314255005	4.33402214773528e-05	"Bacteria"	"Proteobacteria"	"Gammaproteobacteria"	"Pseudomonadales"	"Moraxellaceae"
+-3.32164988791242	0.836041569503827	0.000411159611647223	"Bacteria"	"Actinobacteriota"	"Acidimicrobiia"	"Actinomarinales"	"Actinomarinaceae"
+-3.49365605086969	1.21411874701818	0.00731617571533164	"Bacteria"	"Actinobacteriota"	"Actinobacteria"	"Micrococcales"	"Micrococcaceae"
+-3.750265335922	0.904630891500918	0.000255525815569055	"Bacteria"	"Proteobacteria"	"Gammaproteobacteria"	"Pseudomonadales"	"SAR86 clade"
+-4.04812561951243	1.15155134786231	0.00141772885744959	"Bacteria"	"Proteobacteria"	"Gammaproteobacteria"	"Pseudomonadales"	"Pseudomonadaceae"
+-4.05633667126065	1.1042304039077	0.000928725341916157	"Bacteria"	"Proteobacteria"	"Alphaproteobacteria"	"SAR11 clade"	"Clade I"
+-4.20121932423963	0.815534794033078	1.51874291058279e-05	"Bacteria"	"Proteobacteria"	"Gammaproteobacteria"	"Xanthomonadales"	"Xanthomonadaceae"
+-4.24861261419361	0.458481481276826	2.61426414951818e-10	"Bacteria"	"Bacteroidota"	"Bacteroidia"	"Flavobacteriales"	"Flavobacteriaceae"
+-4.50121512031862	1.73219393368985	0.0143761119536863	"Bacteria"	"Proteobacteria"	"Alphaproteobacteria"	"Rickettsiales"	"Fokiniaceae"
+-4.55528684730126	1.33832214295059	0.0019048094149096	"Bacteria"	"Bacteroidota"	"Rhodothermia"	"Rhodothermales"	"Rhodothermaceae"
+-4.92849850289697	1.29710946000352	0.000660273217986501	"Bacteria"	"Proteobacteria"	"Alphaproteobacteria"	"Puniceispirillales"	"SAR116 clade"

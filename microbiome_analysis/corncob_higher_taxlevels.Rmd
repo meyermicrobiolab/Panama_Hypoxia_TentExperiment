@@ -10,6 +10,9 @@ library(phyloseq)
 library(corncob)
 library(plyr)
 library(dplyr)
+library(reshape2)
+library(tibble)
+library(ggplot2)
 writeLines(capture.output(sessionInfo()), "sessionInfo.txt")
 ```
 
@@ -30,7 +33,7 @@ ps <- phyloseq(otu_table(otu, taxa_are_rows=FALSE),
                         tax_table(taxon))
 ps  # 11845 taxa and 96 samples
 
-ps1 = subset_samples(ps, Tent.treatment == "FT")
+ps1 = subset_samples(ps, Treatment == "fully closed")
 ps1 # 11845 taxa and 36 samples, keeping both coral species here
 ps1 <- prune_taxa(taxa_sums(ps1) > 1, ps1) #remove taxa not found in remaining samples
 ps1 # 4936 taxa and 36 samples, keeping both coral species here
@@ -56,17 +59,9 @@ ps1 <- phyloseq(otu_table(otu, taxa_are_rows=FALSE),
                         tax_table(taxon))
 ps1 #4936 taxa and 36 samples
 
-
 # collapse ASVs into higher taxonomic groups for DA analysis
 ps1_family <- ps1 %>% phyloseq::tax_glom("Family")
 ps1_family # 549 taxa (families) and 36 samples
-
-ps1_order <- ps1 %>% phyloseq::tax_glom("Order")
-ps1_order # 336 taxa (orders) and 36 samples
-
-ps1_class <- ps1 %>% phyloseq::tax_glom("Class")
-ps1_class # 147 taxa (classes) and 36 samples
-
 
 ```
 
@@ -79,16 +74,14 @@ ps1_class # 147 taxa (classes) and 36 samples
 
 ps1 # 4936 ASVs and 36 samples
 
-
 # DA determined relative to first reference level, so set this manually to the "before" treatment
-sample_data(ps1)$Expm.status<-factor(sample_data(ps1)$Expm.status,levels=c("Bef","Aft","Rec"))
-
+sample_data(ps1)$Timepoint<-factor(sample_data(ps1)$Timepoint,levels=c("before","during","after"))
 
 set.seed(1)
-timepoint.da <- differentialTest(formula = ~ Expm.status, 
-                                 phi.formula = ~ Expm.status,
+timepoint.da <- differentialTest(formula = ~ Timepoint, 
+                                 phi.formula = ~ Timepoint,
                                  formula_null = ~ 1,
-                                 phi.formula_null = ~ Expm.status,
+                                 phi.formula_null = ~ Timepoint,
                                  test = "Wald", boot = FALSE,
                                  data = ps1,
                                  fdr_cutoff = 0.05)
@@ -123,11 +116,6 @@ timepoint.da.models.df <- ldply(timepoint.da.models, data.frame) %>%
 ### Save these data so you don't have to re-run the model ###
 write.table(timepoint.da.models.df, "DA_ASV_timepoint.txt", sep="\t",row.names = FALSE)
 
-
-###### Create plot of 17 differentially abundant ASVs
-
-
-
 ```
 
 ### differentially abundant taxa: FAMILY LEVEL, BOTH CORAL SPECIES, FULL TENT ONLY
@@ -138,25 +126,24 @@ write.table(timepoint.da.models.df, "DA_ASV_timepoint.txt", sep="\t",row.names =
 
 ps1_family #549 families and 36 samples
 
-
-# DA determined relative to first reference level, so set this manually to the "none" treatment
-sample_data(ps1_family)$Expm.status<-factor(sample_data(ps1_family)$Expm.status,levels=c("Bef","Aft","Rec"))
-
+# DA determined relative to first reference level, so set this manually to the "before" treatment
+sample_data(ps1_family)$Timepoint<-factor(sample_data(ps1_family)$Timepoint,levels=c("before","during","after"))
 
 set.seed(1)
-timepoint.da <- differentialTest(formula = ~ Expm.status, 
-                                 phi.formula = ~ Expm.status,
+timepoint.da <- differentialTest(formula = ~ Timepoint, 
+                                 phi.formula = ~ Timepoint,
                                  formula_null = ~ 1,
-                                 phi.formula_null = ~ Expm.status,
+                                 phi.formula_null = ~ Timepoint,
                                  test = "Wald", boot = FALSE,
                                  data = ps1_family,
                                  fdr_cutoff = 0.05)
 
 timepoint.da$significant_taxa # 29 differential abundant families out of 549
 
-#quick look at results with corncob's plotting feature
-plot(timepoint.da) # lists full taxonomy
-plot(timepoint.da, level="Family") # lists just Family
+#quick look at results with corncob's plotting feature and export as supplemental figure
+pdf("DA_family.pdf", bg ="white",width=10)
+plot(timepoint.da, level="Family") 
+dev.off()
 
 # create a function that will return the values of interest
 # This one is for when there is only one comparison
@@ -178,123 +165,82 @@ sig.taxonomy.timepoint <- as.data.frame(tax_table(ps1_family)[timepoint.da$signi
 # Move the data from a list to a dataframe and add taxonomy info
 timepoint.da.models.df <- ldply(timepoint.da.models, data.frame) %>% 
   left_join(sig.taxonomy.timepoint, by = c(".id" = "sequence"))
+timepoint.da.models.df$Genus<-NULL
+timepoint.da.models.df$.id<-NULL
+# sort by DA estimate: positive values are enriched during/after low oxygen relative to before treatment
+timepoint.da.models.df<-timepoint.da.models.df[order(timepoint.da.models.df$Estimate,decreasing=TRUE),]
 
 ### Save these data so you don't have to re-run the model ###
 write.table(timepoint.da.models.df, "DA_FAMILY_timepoint.txt", sep="\t",row.names = FALSE)
+
+### Plot DA families, using sorted list
+# first, get list of families (29 DA families total)
+DAfamilies <- glue::glue_collapse(droplevels(factor(timepoint.da.models.df$Family)), sep = ", ") #this is to get a list of the families that are different
+print(DAfamilies)
+# Fusibacteraceae, Lentimicrobiaceae, Izemoplasmatales, Peptostreptococcales-Tissierellales, Arcobacteraceae, Nitrincolaceae, Desulfovibrionaceae, Absconditabacteriales (SR1), Marinifilaceae, Lachnospirales, Vibrionaceae, Pseudoalteromonadaceae, Rhizobiaceae, Saprospiraceae, Lentisphaeraceae, SAR324 clade(Marine group B), Cyanobiaceae, Bacteria, Moraxellaceae, Actinomarinaceae, Micrococcaceae, SAR86 clade, Pseudomonadaceae, Clade I, Xanthomonadaceae, Flavobacteriaceae, Fokiniaceae, Rhodothermaceae, SAR116 clade
+
+##### specifically interested in what is enriched during low oxygen conditions for plotting
+# looking at the default corncob plot that shows what is enriched during versus after relative to before treatment, there are 9 families enriched during the low oxygen treatment
+# low oxygen treatment enriched families, sorted by DA Estimate = Fusibacteraceae, Lentimicrobiaceae, Izemoplasmatales, Peptostreptococcales-Tissierellales, Arcobacteraceae, Nitrincolaceae, Desulfovibrionaceae, Marinifilaceae, Vibrionaceae
+
+# retrieve relative abundances of families for plotting
+ps1_family #549 families and 36 samples
+ps1_family_ra<-transform_sample_counts(ps1_family, function(OTU) OTU/sum(OTU))
+ps1_family_ra #549 families and 36 samples
+otu_f = as(otu_table(ps1_family_ra), "matrix")
+taxon_f = as(tax_table(ps1_family_ra), "matrix")
+fam<-t(otu_f)
+fam <- as.data.frame(fam)
+fam <- tibble::rownames_to_column(fam, "ASV")
+taxon_f <- as.data.frame(taxon_f)
+taxon_f <- tibble::rownames_to_column(taxon_f, "ASV")
+fam_tax <- merge(fam, taxon_f, by="ASV", all=FALSE)
+fam_tax$Genus<-NULL
+fam_tax$ASV<-NULL
+fam_tax$sequence<-NULL
+# now to retrieve only the 9 families out of 549 families that I want to plot
+DA1 <- fam_tax %>% filter(Family =='Fusibacteraceae')
+DA2 <- fam_tax %>% filter(Family =='Lentimicrobiaceae')
+DA3 <- fam_tax %>% filter(Family =='Izemoplasmatales')
+DA4 <- fam_tax %>% filter(Family =='Peptostreptococcales-Tissierellales')
+DA5 <- fam_tax %>% filter(Family =='Arcobacteraceae')
+DA6 <- fam_tax %>% filter(Family =='Nitrincolaceae')
+DA7 <- fam_tax %>% filter(Family =='Desulfovibrionaceae')
+DA8 <- fam_tax %>% filter(Family =='Marinifilaceae')
+DA9 <- fam_tax %>% filter(Family =='Vibrionaceae')
+DA_lowoxygen<-rbind(DA1,DA2,DA3,DA4,DA5,DA6,DA7,DA8,DA9)
+
+# Merge with metadata for plotting aesthetics
+samples <- as.data.frame(samples)
+samples <- tibble::rownames_to_column(samples, "sample")
+DA_lowoxygen_long<-melt(DA_lowoxygen,value.name="proportion",variable.name="sample",id.vars=c("Kingdom","Phylum","Class","Order","Family"))
+DAplot <- merge(DA_lowoxygen_long,samples,by="sample", all=TRUE)
+
+# set aesthetics
+DAplot$Timepoint<-factor(DAplot$Timepoint,levels=c("before","during","after"))
+cols1<-c("before"="#009E73","during"="#CC79A7","after"="#999999") #colorblind friendly palette
+
+fams <- ggplot(DAplot, aes(x=Family, y=proportion))+
+  geom_point(size=4,aes(color=Timepoint))+
+  scale_colour_manual(values=cols1)+
+  coord_flip()+
+  facet_grid(Species~.)+
+  theme_bw()+
+  theme(axis.text.x=element_text(size=14))+
+  theme(axis.text.y=element_text(size=14))+
+  theme(axis.title.y=element_blank())+
+  theme(axis.title.x=element_text(size=14))+
+  theme(strip.text.y=element_text(size=14,face="bold.italic"))+
+  theme(legend.position="bottom")+
+  geom_errorbar(aes(ymin=proportion-se, ymax=proportion+se, color=Timepoint), width=.1)+
+  theme(legend.text = element_text(size=12))
+fams
+
+
+#  geom_errorbar(aes(ymin=proportion-Std.Error, ymax=proportion+Std.Error, color=Timepoint), width=.1)+
 ```
 
 
-
-### differentially abundant taxa: ORDER LEVEL, BOTH CORAL SPECIES, FULL TENT ONLY
-
-# results: 32 differential abundant orders out of 336; 12 orders enriched after low oxygen
-
-```{r, echo=FALSE}
-
-ps1_order # 336 orders and 36 samples
-
-# DA determined relative to first reference level, so set this manually to the "none" treatment
-sample_data(ps1_order)$Expm.status<-factor(sample_data(ps1_order)$Expm.status,levels=c("Bef","Aft","Rec"))
-
-
-set.seed(1)
-timepoint.da <- differentialTest(formula = ~ Expm.status, 
-                                 phi.formula = ~ Expm.status,
-                                 formula_null = ~ 1,
-                                 phi.formula_null = ~ Expm.status,
-                                 test = "Wald", boot = FALSE,
-                                 data = ps1_order,
-                                 fdr_cutoff = 0.05)
-
-timepoint.da$significant_taxa # 32 differential abundant orders out of 336
-
-#quick look at results with corncob's plotting feature
-plot(timepoint.da) # lists full taxonomy
-plot(timepoint.da, level="Order") # lists just Order
-
-# create a function that will return the values of interest
-# This one is for when there is only one comparison
-extractmods <- function(model) {
-  result <- data.frame("Estimate" = model$coefficients[2, 1], 
-                       "Std.Error" = model$coefficients[2, 2], 
-                       "p" = model$coefficients[2, 4])
-  return(result)
-}
-
-# save the timepoint.da output and add asv, p.adj values to it, and ultimately taxonomny info
-timepoint.da.models <- lapply(timepoint.da$significant_models, extractmods)
-names(timepoint.da.models) <- timepoint.da$significant_taxa
-
-# Add ASVs to the taxonomy table and save the significant asvs
-tax_table(ps1_order)[,7] <- rownames(tax_table(ps1_order))
-sig.taxonomy.timepoint <- as.data.frame(tax_table(ps1_order)[timepoint.da$significant_taxa,]) 
-
-# Move the data from a list to a dataframe and add taxonomy info
-timepoint.da.models.df <- ldply(timepoint.da.models, data.frame) %>% 
-  left_join(sig.taxonomy.timepoint, by = c(".id" = "sequence"))
-
-### Save these data so you don't have to re-run the model ###
-write.table(timepoint.da.models.df, "DA_ORDER_timepoint.txt", sep="\t",row.names = FALSE)
-
-```
-
-
-
-
-### differentially abundant taxa: CLASS LEVEL, BOTH CORAL SPECIES, FULL TENT ONLY
-
-# results: 20 differential abundant classes out of 147; 8 classes enriched after low oxygen
-
-
-```{r, echo=FALSE}
-
-ps1_class # 147 classes and 36 samples
-
-# DA determined relative to first reference level, so set this manually to the "none" treatment
-sample_data(ps1_class)$Expm.status<-factor(sample_data(ps1_class)$Expm.status,levels=c("Bef","Aft","Rec"))
-
-
-set.seed(1)
-timepoint.da <- differentialTest(formula = ~ Expm.status, 
-                                 phi.formula = ~ Expm.status,
-                                 formula_null = ~ 1,
-                                 phi.formula_null = ~ Expm.status,
-                                 test = "Wald", boot = FALSE,
-                                 data = ps1_class,
-                                 fdr_cutoff = 0.05)
-
-timepoint.da$significant_taxa # 20 differential abundant classes out of 147
-
-#quick look at results with corncob's plotting feature
-plot(timepoint.da) # lists full taxonomy
-plot(timepoint.da, level="Class") # lists just Class
-
-
-# create a function that will return the values of interest
-# This one is for when there is only one comparison (here I only want to know what changed after low oxygen)
-extractmods <- function(model) {
-  result <- data.frame("Estimate" = model$coefficients[2, 1], 
-                       "Std.Error" = model$coefficients[2, 2], 
-                       "p" = model$coefficients[2, 4])
-  return(result)
-}
-
-# save the timepoint.da output and add asv, p.adj values to it, and ultimately taxonomny info
-timepoint.da.models <- lapply(timepoint.da$significant_models, extractmods)
-names(timepoint.da.models) <- timepoint.da$significant_taxa
-
-# Add ASVs to the taxonomy table and save the significant asvs
-tax_table(ps1_class)[,7] <- rownames(tax_table(ps1_class))
-sig.taxonomy.timepoint <- as.data.frame(tax_table(ps1_class)[timepoint.da$significant_taxa,]) 
-
-# Move the data from a list to a dataframe and add taxonomy info
-timepoint.da.models.df <- ldply(timepoint.da.models, data.frame) %>% 
-  left_join(sig.taxonomy.timepoint, by = c(".id" = "sequence"))
-
-### Save these data so you don't have to re-run the model ###
-write.table(timepoint.da.models.df, "DA_CLASS_timepoint.txt", sep="\t",row.names = FALSE)
-
-```
 
 
 
@@ -303,10 +249,10 @@ write.table(timepoint.da.models.df, "DA_CLASS_timepoint.txt", sep="\t",row.names
 
 ```{r, echo=FALSE}
 #prepare data by coral species 
-psS = subset_samples(ps1, Species == "Aten")
-psS # 4936 taxa and 18 samples, just ATEN
-psS <- prune_taxa(taxa_sums(psS) > 1, psS) #remove taxa not found in remaining samples
-psS # 2024 taxa and 18 samples, just ATEN
+psA = subset_samples(ps1, Species == "Aten")
+psA # 4936 taxa and 18 samples, just ATEN
+psA <- prune_taxa(taxa_sums(psA) > 1, psA) #remove taxa not found in remaining samples
+psA # 2024 taxa and 18 samples, just ATEN
 otu = as(otu_table(psS), "matrix")
 taxon = as(tax_table(psS), "matrix")
 metadata = as(sample_data(psS), "matrix")
@@ -323,14 +269,11 @@ write.table(otu,"silva_nochloronomito_otu_table_psS_SSID_FT.txt",sep="\t",col.na
 write.table(taxon,"silva_nochloronomito_taxa_table_psS_SSID_FT.txt",sep="\t",col.names=NA)
 
 
-
-
 #### Corncob with only ATEN
 psA # 2024 ASVs and 18 samples
 
-# DA determined relative to first reference level, so set this manually to the "none" treatment
+# DA determined relative to first reference level, so set this manually to the "before" treatment
 sample_data(psA)$Expm.status<-factor(sample_data(psA)$Expm.status,levels=c("Bef","Aft","Rec"))
-
 
 set.seed(1)
 timepoint.da <- differentialTest(formula = ~ Expm.status, 
@@ -344,7 +287,6 @@ timepoint.da <- differentialTest(formula = ~ Expm.status,
 timepoint.da$significant_taxa # 11 differential abundant ASVs out of 2024
 
 #quick look at results with corncob's plotting feature
-plot(timepoint.da) # lists full taxonomy
 plot(timepoint.da, level="Genus") # lists just genus
 
 # create a function that will return the values of interest
@@ -375,13 +317,11 @@ write.table(timepoint.da.models.df, "DA_ASV_timepoint_ATEN.txt", sep="\t",row.na
 
 
 
-
 #### Corncob with only SSID
 psS # 3613 ASVs and 18 samples
 
-# DA determined relative to first reference level, so set this manually to the "none" treatment
+# DA determined relative to first reference level, so set this manually to the "before" treatment
 sample_data(psS)$Expm.status<-factor(sample_data(psS)$Expm.status,levels=c("Bef","Aft","Rec"))
-
 
 set.seed(1)
 timepoint.da <- differentialTest(formula = ~ Expm.status, 
