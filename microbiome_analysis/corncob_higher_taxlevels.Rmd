@@ -219,6 +219,8 @@ DAplot <- merge(DA_lowoxygen_long,samples,by="sample", all=TRUE)
 # set aesthetics
 DAplot$Timepoint<-factor(DAplot$Timepoint,levels=c("before","during","after"))
 cols1<-c("before"="#009E73","during"="#CC79A7","after"="#999999") #colorblind friendly palette
+# low oxygen treatment enriched families, sorted by DA Estimate = Fusibacteraceae, Lentimicrobiaceae, Izemoplasmatales, Peptostreptococcales-Tissierellales, Arcobacteraceae, Nitrincolaceae, Desulfovibrionaceae, Marinifilaceae, Vibrionaceae
+DAplot$Family<-factor(DAplot$Family,levels=c("Vibrionaceae","Marinifilaceae","Desulfovibrionaceae","Nitrincolaceae","Arcobacteraceae","Peptostreptococcales-Tissierellales","Izemoplasmatales","Lentimicrobiaceae","Fusibacteraceae"))
 
 fams <- ggplot(DAplot, aes(x=Family, y=proportion))+
   geom_point(size=4,aes(color=Timepoint))+
@@ -227,17 +229,15 @@ fams <- ggplot(DAplot, aes(x=Family, y=proportion))+
   facet_grid(Species~.)+
   theme_bw()+
   theme(axis.text.x=element_text(size=14))+
-  theme(axis.text.y=element_text(size=14))+
+  theme(axis.text.y=element_text(size=14,face="italic"))+
   theme(axis.title.y=element_blank())+
   theme(axis.title.x=element_text(size=14))+
   theme(strip.text.y=element_text(size=14,face="bold.italic"))+
   theme(legend.position="bottom")+
-  geom_errorbar(aes(ymin=proportion-se, ymax=proportion+se, color=Timepoint), width=.1)+
   theme(legend.text = element_text(size=12))
 fams
 
 
-#  geom_errorbar(aes(ymin=proportion-Std.Error, ymax=proportion+Std.Error, color=Timepoint), width=.1)+
 ```
 
 
