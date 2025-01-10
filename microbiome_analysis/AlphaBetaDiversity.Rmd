@@ -139,7 +139,7 @@ alpha_fc$Timepoint<-factor(alpha_fc$Timepoint,levels=c("before","during","after"
 
 obs <- ggplot(alpha_fc,aes(x=Timepoint,y=Observed,color=Timepoint))+
   geom_boxplot(outlier.shape=NA)+
-  geom_jitter()+
+  geom_point(size=3)+
   facet_grid(Species~.)+
   theme(strip.text.y=element_text(face="bold.italic"))+
   theme(legend.position="none")+
@@ -150,7 +150,7 @@ obs
 
 shan <- ggplot(alpha_fc,aes(x=Timepoint,y=Shannon,color=Timepoint))+
   geom_boxplot(outlier.shape=NA)+
-  geom_jitter()+
+  geom_point(size=3)+
   facet_grid(Species~.)+
   theme(strip.text.y=element_text(face="bold.italic"))+
   theme(legend.position="none")+
@@ -161,7 +161,7 @@ shan
 
 simp <- ggplot(alpha_fc,aes(x=Timepoint,y=Simpson,color=Timepoint))+
   geom_boxplot(outlier.shape=NA)+
-  geom_jitter()+
+  geom_point(size=3)+
   facet_grid(Species~.)+
   theme(strip.text.y=element_text(face="bold.italic"))+
   theme(legend.position="none")+

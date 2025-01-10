@@ -217,26 +217,31 @@ DA_lowoxygen_long<-melt(DA_lowoxygen,value.name="proportion",variable.name="samp
 DAplot <- merge(DA_lowoxygen_long,samples,by="sample", all=TRUE)
 
 # set aesthetics
-DAplot$Timepoint<-factor(DAplot$Timepoint,levels=c("before","during","after"))
+DAplot$Timepoint<-factor(DAplot$Timepoint,levels=c("after","during","before")) # listed so top = before
 cols1<-c("before"="#009E73","during"="#CC79A7","after"="#999999") #colorblind friendly palette
-# low oxygen treatment enriched families, sorted by DA Estimate = Fusibacteraceae, Lentimicrobiaceae, Izemoplasmatales, Peptostreptococcales-Tissierellales, Arcobacteraceae, Nitrincolaceae, Desulfovibrionaceae, Marinifilaceae, Vibrionaceae
-DAplot$Family<-factor(DAplot$Family,levels=c("Vibrionaceae","Marinifilaceae","Desulfovibrionaceae","Nitrincolaceae","Arcobacteraceae","Peptostreptococcales-Tissierellales","Izemoplasmatales","Lentimicrobiaceae","Fusibacteraceae"))
+# low oxygen treatment enriched families, sorted by DA Estimate
+DAplot$Family<-factor(DAplot$Family,levels=c("Fusibacteraceae","Lentimicrobiaceae","Izemoplasmatales","Peptostreptococcales-Tissierellales","Arcobacteraceae","Nitrincolaceae","Desulfovibrionaceae","Marinifilaceae","Vibrionaceae"))
 
-fams <- ggplot(DAplot, aes(x=Family, y=proportion))+
-  geom_point(size=4,aes(color=Timepoint))+
-  scale_colour_manual(values=cols1)+
+
+pdf("DA_families.pdf",bg ="white", width=8.5)
+fams <- ggplot(DAplot, aes(x=Timepoint, y=proportion))+
   coord_flip()+
-  facet_grid(Species~.)+
+  geom_boxplot(outlier.shape=NA)+
+  geom_point(size=3,aes(color=Timepoint))+
+  scale_color_manual(values=cols2,breaks = c("before","during","after"))+
+  facet_grid(Family~Species)+
   theme_bw()+
-  theme(axis.text.x=element_text(size=14))+
-  theme(axis.text.y=element_text(size=14,face="italic"))+
   theme(axis.title.y=element_blank())+
-  theme(axis.title.x=element_text(size=14))+
-  theme(strip.text.y=element_text(size=14,face="bold.italic"))+
-  theme(legend.position="bottom")+
-  theme(legend.text = element_text(size=12))
+  theme(axis.title.x=element_blank())+
+  theme(axis.text.x=element_text(size=14))+
+  theme(axis.text.y=element_blank())+
+  theme(strip.text.x=element_text(size=14,face="bold.italic"))+
+  theme(strip.text.y=element_blank())+
+  theme(legend.position="right")+
+  theme(legend.title = element_text(size=14,face="bold"))+
+  theme(legend.text = element_text(size=14))
 fams
-
+dev.off()
 
 ```
 
