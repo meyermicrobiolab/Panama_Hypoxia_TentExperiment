@@ -224,11 +224,11 @@ DAplot$Family<-factor(DAplot$Family,levels=c("Fusibacteraceae","Lentimicrobiacea
 
 
 pdf("DA_families.pdf",bg ="white", width=8.5)
-fams <- ggplot(DAplot, aes(x=Timepoint, y=proportion))+
+fams <- ggplot(DAplot, aes(x=Timepoint, y=proportion,color=Timepoint))+
   coord_flip()+
   geom_boxplot(outlier.shape=NA)+
-  geom_point(size=3,aes(color=Timepoint))+
-  scale_color_manual(values=cols2,breaks = c("before","during","after"))+
+  geom_point(size=3)+
+  scale_color_manual(values=cols1,breaks = c("before","during","after"))+
   facet_grid(Family~Species)+
   theme_bw()+
   theme(axis.title.y=element_blank())+
