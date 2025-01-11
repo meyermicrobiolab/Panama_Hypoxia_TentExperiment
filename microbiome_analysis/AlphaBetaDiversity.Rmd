@@ -510,8 +510,7 @@ colnames(dis.treat)[7] <- "distance"
 distlm <-lm(distance~Treatment*Timepoint, data=dis.treat)
 summary(distlm)
 anova(distlm)
-
-
+# copy results into text file
 
 ### Plot distance to centroid by treatment and timepoint
 
@@ -531,16 +530,18 @@ time <- ggplot(dis.treat,aes(x=Timepoint,y=distance))+
   scale_color_manual(values=cols2)
 time
 
-treat <- ggplot(dis.treat,aes(x=Timepoint,y=distance))+
+pdf("Distance-to-Centroid_ATEN.pdf",bg ="white",width = 8.5)
+treat <- ggplot(dis.treat,aes(x=Timepoint,y=distance,color=Timepoint))+
   geom_boxplot(outlier.shape=NA)+
-  geom_jitter(aes(color=Treatment))+
-  facet_grid(Treatment~.)+
-  #theme(legend.position="none")+
-  #theme(axis.title.x=element_blank())+
-  #theme(text=element_text(size=14,face="bold"))+
-  scale_color_manual(values=cols2)
+  geom_jitter()+
+  facet_grid(.~Treatment)+
+  theme(legend.position="none")+
+  theme(axis.title.x=element_blank())+
+  theme(text=element_text(size=14,face="bold"))+
+  scale_y_continuous(name="Distance to Centroid")+
+  scale_color_manual(values=cols1)
 treat
-
+dev.off()
 
 ```
 
@@ -605,6 +606,47 @@ anova(mod2) # not significant
 #boxplots
 plot(mod2)
 boxplot(mod2)
+
+mod$distances
+dis <- mod$distances
+#melt
+dis.melt <- melt(dis)
+#move rownames to columns so we can merge the dispersion values and metadata
+dis.melt$Sample <- rownames(dis.melt)
+samples$Sample <- rownames(samples)
+#merge metadata and dispersion 
+dis.treat <- merge(samples, dis.melt)
+#rename column
+colnames(dis.treat)[7] <- "distance"
+
+#run linear model to test significance
+distlm <-lm(distance~Treatment*Timepoint, data=dis.treat)
+summary(distlm)
+anova(distlm)
+# copy results into text file
+
+### Plot distance to centroid by treatment and timepoint
+
+# set aesthetics
+theme_set(theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank()))
+dis.treat$Timepoint<-factor(dis.treat$Timepoint,levels=c("before","during","after"))
+dis.treat$Treatment<-factor(dis.treat$Treatment,levels=c("fully closed","partially closed","open"))
+cols1<-c("before"="#009E73","during"="#CC79A7","after"="#999999") #colorblind friendly palette
+cols2<-c("fully closed"="#D55E00","partially closed"="#0072B2","open"="#56B4E9") #colorblind friendly palette
+
+
+pdf("Distance-to-Centroid_SSID.pdf",bg ="white",width = 8.5)
+treat <- ggplot(dis.treat,aes(x=Timepoint,y=distance,color=Timepoint))+
+  geom_boxplot(outlier.shape=NA)+
+  geom_jitter()+
+  facet_grid(.~Treatment)+
+  theme(legend.position="none")+
+  theme(axis.title.x=element_blank())+
+  theme(text=element_text(size=14,face="bold"))+
+  scale_y_continuous(name="Distance to Centroid")+
+  scale_color_manual(values=cols1)
+treat
+dev.off()
 
 
 
