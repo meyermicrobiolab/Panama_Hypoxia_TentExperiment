@@ -530,7 +530,7 @@ time <- ggplot(dis.treat,aes(x=Timepoint,y=distance))+
   scale_color_manual(values=cols2)
 time
 
-pdf("Distance-to-Centroid_ATEN.pdf",bg ="white",width = 8.5)
+pdf("Distance-to-Centroid_ATEN.pdf",bg ="white",width = 8.5,height=4)
 treat <- ggplot(dis.treat,aes(x=Timepoint,y=distance,color=Timepoint))+
   geom_boxplot(outlier.shape=NA)+
   geom_jitter()+
@@ -635,7 +635,7 @@ cols1<-c("before"="#009E73","during"="#CC79A7","after"="#999999") #colorblind fr
 cols2<-c("fully closed"="#D55E00","partially closed"="#0072B2","open"="#56B4E9") #colorblind friendly palette
 
 
-pdf("Distance-to-Centroid_SSID.pdf",bg ="white",width = 8.5)
+pdf("Distance-to-Centroid_SSID.pdf",bg ="white",width = 8.5,height=4)
 treat <- ggplot(dis.treat,aes(x=Timepoint,y=distance,color=Timepoint))+
   geom_boxplot(outlier.shape=NA)+
   geom_jitter()+
