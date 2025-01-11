@@ -15,6 +15,7 @@ library(dplyr)
 library(vegan)
 library(pairwiseAdonis)
 library(rstatix)
+library(reshape2)
 writeLines(capture.output(sessionInfo()), "sessionInfo.txt")
 ```
 
@@ -281,6 +282,18 @@ pairwise.wilcox.test(alphaS_fc$Simpson, alphaS_fc$Timepoint, p.adjust.method="fd
 
 
 ```{r, echo=FALSE}
+otu <- read.table("Tent_Expm_silva_nochloronomito_otu_table_ps2.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("Tent_Expm_silva_nochloronomito_taxa_table_ps2.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("Tent_Expm_metadata.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps2 <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+               sample_data(samples), 
+               tax_table(taxon))
+ps2 # 1145 taxa and 96 samples
+
 # CALCULATE AITCHISON DISTANCE
 # First, replace 0 values with an estimate (because normalization is taking log, can't have 0)
 # Also transposing here, need samples as rows
@@ -348,3 +361,251 @@ print(perm2)
 
 ```
 
+
+#### DISPERSION OF BETA DIVERSITY -- 96 SAMPLES
+
+```{r, echo=FALSE}
+otu <- read.table("Tent_Expm_silva_nochloronomito_otu_table_ps2.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("Tent_Expm_silva_nochloronomito_taxa_table_ps2.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("Tent_Expm_metadata.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps2 <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+               sample_data(samples), 
+               tax_table(taxon))
+ps2 # 1145 taxa and 96 samples
+
+
+# CALCULATE AITCHISON DISTANCE
+# First, replace 0 values with an estimate (because normalization is taking log, can't have 0)
+# Also transposing here, need samples as rows
+d.czm <- cmultRepl(t(otu), method="CZM", label=0, z.warning=1)
+# Perform the center-log-ratio (CLR) transformation 
+d.clr <- codaSeq.clr(d.czm)
+# transpose matrix of CLR transformed data for ordination and dendrogram
+E.clr <- t(d.clr)
+# plot compositional PCA biplot (perform a singular value decomposition)
+d.pcx <- prcomp(E.clr)
+dist.clr <- dist(E.clr)
+
+# set metadata as factors for anosim
+Treatment<-as.character(samples$Treatment)
+Timepoint<-as.character(samples$Timepoint)
+Species<-as.character(samples$Species)
+
+#calculate multivariate dispersions
+mod <-vegan::betadisper(dist.clr, Treatment)
+#one way anova
+anova(mod) # not significant
+#boxplots
+plot(mod)
+boxplot(mod)
+
+mod2 <-vegan::betadisper(dist.clr, Timepoint)
+#one way anova
+anova(mod2) # not significant
+#boxplots
+plot(mod2)
+boxplot(mod2)
+
+mod3 <-vegan::betadisper(dist.clr, Species)
+#one way anova
+anova(mod3) # not significant
+#boxplots
+plot(mod3)
+boxplot(mod3)
+
+# When all 96 samples are considered, no significant differences in beta diversity dispersion by coral species, treatment, or time
+
+```
+
+
+### DISPERSION OF BETA DIVERSITY -- ATEN ONLY
+
+
+```{r, echo=FALSE}
+otu <- read.table("Tent_Expm_silva_nochloronomito_otu_table_ps2.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("Tent_Expm_silva_nochloronomito_taxa_table_ps2.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("Tent_Expm_metadata.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps2 <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+               sample_data(samples), 
+               tax_table(taxon))
+ps2 # 1145 taxa and 96 samples
+psA = subset_samples(ps2, Species == "Agaricia tenuifolia")
+psA # 1145 taxa and 48 samples
+# export tables for calculating Aitchison distance
+otu = as(otu_table(psA), "matrix")
+taxon = as(tax_table(psA), "matrix")
+metadata = as(sample_data(psA), "matrix")
+write.table(otu,"Tent_Expm_silva_nochloronomito_otu_table_ps2_ATEN.txt",sep="\t",col.names=NA)
+write.table(taxon,"Tent_Expm_silva_nochloronomito_taxa_table_ps2_ATEN.txt",sep="\t",col.names=NA)
+write.table(metadata,"Tent_Expm_metadata_ATEN.txt",sep="\t",col.names=NA)
+
+# clear data and read back in new tables
+otu <- read.table("Tent_Expm_silva_nochloronomito_otu_table_ps2_ATEN.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("Tent_Expm_silva_nochloronomito_taxa_table_ps2_ATEN.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("Tent_Expm_metadata_ATEN.txt",sep="\t",header=T,row.names=1)
+
+# CALCULATE AITCHISON DISTANCE
+# First, replace 0 values with an estimate (because normalization is taking log, can't have 0)
+# Also transposing here, need samples as rows
+d.czm <- cmultRepl(t(otu), method="CZM", label=0, z.warning=1)
+# Perform the center-log-ratio (CLR) transformation 
+d.clr <- codaSeq.clr(d.czm)
+# transpose matrix of CLR transformed data for ordination and dendrogram
+E.clr <- t(d.clr)
+# plot compositional PCA biplot (perform a singular value decomposition)
+d.pcx <- prcomp(E.clr)
+dist.clr <- dist(E.clr)
+
+# set metadata as factors for anosim
+Treatment<-as.character(samples$Treatment)
+Timepoint<-as.character(samples$Timepoint)
+
+#calculate multivariate dispersions
+mod <-vegan::betadisper(dist.clr, Treatment)
+#one way anova
+anova(mod) # p < 0.001
+#boxplots
+plot(mod)
+boxplot(mod)
+# dispersion highest in fully closed tent
+
+mod2 <-vegan::betadisper(dist.clr, Timepoint)
+#one way anova
+anova(mod2) # p = 0.001
+#boxplots
+plot(mod2)
+boxplot(mod2)
+# dispersion highest during and after
+
+## Compute mean distance to centroid per group
+# this just prints mean distance to centroid values on the console 
+tapply(mod$distances, Treatment, mean)
+# looking at data: mean distance to centroid highest in fully closed tents
+## this just prints variance in mean distance to centroid values on the console 
+tapply(mod$distances, Treatment, var)
+# looking at data: variance is highest in fully closed tents
+
+#Get the distances to centroid from the model
+mod$distances
+dis <- mod$distances
+#melt
+dis.melt <- melt(dis)
+#move rownames to columns so we can merge the dispersion values and metadata
+dis.melt$Sample <- rownames(dis.melt)
+samples$Sample <- rownames(samples)
+#merge metadata and dispersion 
+dis.treat <- merge(samples, dis.melt)
+#rename column
+colnames(dis.treat)[7] <- "distance"
+
+#run linear model to test significance
+distlm <-lm(distance~Treatment*Timepoint, data=dis.treat)
+summary(distlm)
+anova(distlm)
+
+
+
+### Plot distance to centroid by treatment and timepoint
+
+# set aesthetics
+theme_set(theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank()))
+dis.treat$Timepoint<-factor(dis.treat$Timepoint,levels=c("before","during","after"))
+dis.treat$Treatment<-factor(dis.treat$Treatment,levels=c("fully closed","partially closed","open"))
+cols1<-c("before"="#009E73","during"="#CC79A7","after"="#999999") #colorblind friendly palette
+cols2<-c("fully closed"="#D55E00","partially closed"="#0072B2","open"="#56B4E9") #colorblind friendly palette
+
+time <- ggplot(dis.treat,aes(x=Timepoint,y=distance))+
+  geom_boxplot(outlier.shape=NA)+
+  geom_jitter(aes(color=Treatment))+
+  #theme(legend.position="none")+
+  #theme(axis.title.x=element_blank())+
+  #theme(text=element_text(size=14,face="bold"))+
+  scale_color_manual(values=cols2)
+time
+
+treat <- ggplot(dis.treat,aes(x=Timepoint,y=distance))+
+  geom_boxplot(outlier.shape=NA)+
+  geom_jitter(aes(color=Treatment))+
+  facet_grid(Treatment~.)+
+  #theme(legend.position="none")+
+  #theme(axis.title.x=element_blank())+
+  #theme(text=element_text(size=14,face="bold"))+
+  scale_color_manual(values=cols2)
+treat
+
+
+```
+
+
+### DISPERSION OF BETA DIVERSITY -- SSID ONLY
+
+
+```{r, echo=FALSE}
+otu <- read.table("Tent_Expm_silva_nochloronomito_otu_table_ps2.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("Tent_Expm_silva_nochloronomito_taxa_table_ps2.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("Tent_Expm_metadata.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps2 <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+               sample_data(samples), 
+               tax_table(taxon))
+ps2 # 1145 taxa and 96 samples
+psS = subset_samples(ps2, Species == "Siderastrea siderea")
+psS # 1145 taxa and 48 samples
+# export tables for calculating Aitchison distance
+otu = as(otu_table(psS), "matrix")
+taxon = as(tax_table(psS), "matrix")
+metadata = as(sample_data(psS), "matrix")
+write.table(otu,"Tent_Expm_silva_nochloronomito_otu_table_ps2_SSID.txt",sep="\t",col.names=NA)
+write.table(taxon,"Tent_Expm_silva_nochloronomito_taxa_table_ps2_SSID.txt",sep="\t",col.names=NA)
+write.table(metadata,"Tent_Expm_metadata_SSID.txt",sep="\t",col.names=NA)
+
+# clear data and read back in new tables
+otu <- read.table("Tent_Expm_silva_nochloronomito_otu_table_ps2_SSID.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("Tent_Expm_silva_nochloronomito_taxa_table_ps2_SSID.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("Tent_Expm_metadata_SSID.txt",sep="\t",header=T,row.names=1)
+
+# CALCULATE AITCHISON DISTANCE
+# First, replace 0 values with an estimate (because normalization is taking log, can't have 0)
+# Also transposing here, need samples as rows
+d.czm <- cmultRepl(t(otu), method="CZM", label=0, z.warning=1)
+# Perform the center-log-ratio (CLR) transformation 
+d.clr <- codaSeq.clr(d.czm)
+# transpose matrix of CLR transformed data for ordination and dendrogram
+E.clr <- t(d.clr)
+# plot compositional PCA biplot (perform a singular value decomposition)
+d.pcx <- prcomp(E.clr)
+dist.clr <- dist(E.clr)
+
+# set metadata as factors for anosim
+Treatment<-as.character(samples$Treatment)
+Timepoint<-as.character(samples$Timepoint)
+
+#calculate multivariate dispersions
+mod <-vegan::betadisper(dist.clr, Treatment)
+#one way anova
+anova(mod) # not significant
+#boxplots
+plot(mod)
+boxplot(mod)
+
+mod2 <-vegan::betadisper(dist.clr, Timepoint)
+#one way anova
+anova(mod2) # not significant
+#boxplots
+plot(mod2)
+boxplot(mod2)
+
+
+
+```

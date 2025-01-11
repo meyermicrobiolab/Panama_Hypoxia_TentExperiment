@@ -1,0 +1,36 @@
+
+Call:
+lm(formula = distance ~ Treatment * Timepoint, data = dis.treat)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-39.988  -7.491  -0.028   5.364  31.259 
+
+Coefficients:
+                                          Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                 84.564      5.575  15.167  < 2e-16 ***
+Treatmentopen                              -29.746      8.270  -3.597 0.000894 ***
+Treatmentpartially closed                  -45.701      8.270  -5.526 2.35e-06 ***
+Timepointbefore                            -43.165      7.885  -5.474 2.78e-06 ***
+Timepointduring                            -28.701      7.885  -3.640 0.000790 ***
+Treatmentopen:Timepointbefore               26.155     11.695   2.236 0.031113 *  
+Treatmentpartially closed:Timepointbefore   36.637     11.695   3.133 0.003281 ** 
+Treatmentopen:Timepointduring               21.345     11.695   1.825 0.075643 .  
+Treatmentpartially closed:Timepointduring   21.750     11.695   1.860 0.070467 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 13.66 on 39 degrees of freedom
+Multiple R-squared:  0.6292,	Adjusted R-squared:  0.5532 
+F-statistic: 8.274 on 8 and 39 DF,  p-value: 1.777e-06
+
+Analysis of Variance Table
+
+Response: distance
+                    Df Sum Sq Mean Sq F value    Pr(>F)    
+Treatment            2 5673.5 2836.77 15.2098 1.309e-05 ***
+Timepoint            2 4561.7 2280.86 12.2292 7.537e-05 ***
+Treatment:Timepoint  4 2110.1  527.52  2.8284    0.0375 *  
+Residuals           39 7273.9  186.51                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
