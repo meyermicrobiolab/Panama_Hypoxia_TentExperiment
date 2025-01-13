@@ -89,7 +89,9 @@ timepoint.da <- differentialTest(formula = ~ Timepoint,
 timepoint.da$significant_taxa # 17 differential abundant ASV out of 4936
 
 #quick look at results with corncob's plotting feature
+pdf("DA_ASV.pdf", bg ="white",width=10)
 plot(timepoint.da, level="Genus") # lists by genus
+dev.off()
 
 # create a function that will return the values of interest
 # This one is for when there is only one comparison (here I only want to know what changed after low oxygen)
