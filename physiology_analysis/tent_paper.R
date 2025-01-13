@@ -145,7 +145,7 @@ Figure1 <- ggarrange(p_bleach, p_mort,
                      ncol= 2, nrow = 1,
                      labels = c("A)","B)"),
                      common.legend = TRUE, 
-                     legend = "none")
+                     legend = "bottom")
 
 Figure1
 

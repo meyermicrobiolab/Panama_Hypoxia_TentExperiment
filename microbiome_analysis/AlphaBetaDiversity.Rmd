@@ -345,6 +345,7 @@ p<-p+geom_point(size=2)+
   theme(legend.text = element_text(size=12))+
   theme(strip.text.x = element_text(size=12))+
   theme(strip.text.y = element_text(size=12,face="italic"))+
+  theme(legend.position="bottom")+
   scale_color_manual(values=cols)+
   guides(fill = guide_legend(override.aes=list(shape=21)))+
   facet_grid(samples$Species~samples$Timepoint)
