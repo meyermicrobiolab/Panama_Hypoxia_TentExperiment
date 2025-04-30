@@ -19,7 +19,7 @@ library(reshape2)
 writeLines(capture.output(sessionInfo()), "sessionInfo.txt")
 ```
 
-## Perform center-log-ratio transformation on ASVs and calculate Aitchison Distance and principal components
+## Read in data tables for phyloseq analysis and remove low abundance taxa
 
 
 ```{r, echo=FALSE}
@@ -309,43 +309,27 @@ pc1 <- round(d.pcx$sdev[1]^2/sum(d.pcx$sdev^2),2)
 pc2 <- round(d.pcx$sdev[2]^2/sum(d.pcx$sdev^2),2)
 xlab <- paste("PC1: ", pc1, sep="")
 ylab <- paste("PC2: ", pc2, sep="")
+# informational plots, not for publication
 #biplot(d.pcx, cex=c(0.6,0.4), var.axes=F,scale=1, xlab=xlab, ylab=ylab)
-summary(d.pcx)
-str(d.pcx)
-screeplot(d.pcx)
+#screeplot(d.pcx)
 
 # replot PCA with ggplot2 (showing samples only)
 df_out <- as.data.frame(d.pcx$x)
-theme_set(theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank()))
-cols<-c("fully closed"="#D55E00","partially closed"="#0072B2","open"="#56B4E9") #colorblind friendly palette
-samples$Treatment<-factor(samples$Treatment,levels=c("fully closed","partially closed","open"))
-samples$Timepoint<-factor(samples$Timepoint,levels=c("before","during","after"))
-
-pdf("PCA_96.pdf",bg ="white",width = 8.5)
-p<-ggplot(df_out,aes(x=PC1,y=PC2,color=samples$Treatment,shape=samples$Species))
-p<-p+geom_point(size=2)+
-  theme(axis.title = element_text(size=14))+
-  theme(axis.text=element_text(size=12))+
-  theme(legend.title = element_text(size=14))+
-  theme(legend.text = element_text(size=12))+
-  theme(strip.text.x = element_text(size=12))+
-  scale_color_manual(values=cols)+
-  guides(fill = guide_legend(override.aes=list(shape=21)))+
-  facet_grid(~samples$Timepoint)
-p + labs(x=xlab, y=ylab, color="Treatment",shape="Coral species") +coord_fixed()
-dev.off()
-
-# test EQ theory
-# create single dataframe for plotting
+# create single dataframe for plotting because samples are ordered differently in the pcx dataframe than in the sample metadata
 # step 1 make rownames a column for that I can merge by sample name
 samples2<-rownames_to_column(samples, var = "sample")
 df_out2<-rownames_to_column(df_out, var = "sample")
 single_df<-merge(samples2,df_out2, by="sample")
-# now replot with merged dataframes
+theme_set(theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank()))
+cols<-c("fully closed"="#D55E00","partially closed"="#0072B2","open"="#56B4E9") #colorblind friendly palette
+single_df$Treatment<-factor(single_df$Treatment,levels=c("fully closed","partially closed","open"))
+single_df$Timepoint<-factor(single_df$Timepoint,levels=c("before","during","after"))
 
-pdf("PCA_96_test.pdf",bg ="white",width = 8.5)
+# not using for publication - both coral species in one plot
+pdf("PCA_96.pdf",bg ="white",width = 8.5)
 p<-ggplot(single_df,aes(x=PC1,y=PC2,color=single_df$Treatment,shape=single_df$Species))
 p<-p+geom_point(size=2)+
+  geom_text(label = single_df$sample, nudge_x = 2, nudge_y = 3, color = "black", alpha = 0.6)+ #adds the sample name to points
   theme(axis.title = element_text(size=14))+
   theme(axis.text=element_text(size=12))+
   theme(legend.title = element_text(size=14))+
@@ -353,16 +337,13 @@ p<-p+geom_point(size=2)+
   theme(strip.text.x = element_text(size=12))+
   scale_color_manual(values=cols)+
   guides(fill = guide_legend(override.aes=list(shape=21)))+
-  facet_grid(~samples$Timepoint)
-p + labs(x=xlab, y=ylab, color="Treatment",shape="Coral species") +coord_fixed()
+  facet_grid(~single_df$Timepoint)
+p + coord_fixed()
 dev.off()
 
-
-
-
-
+# using for publication - facet by both timepoint and coral species
 pdf("PCA_96_facet.pdf",bg ="white",width = 8.5)
-p<-ggplot(df_out,aes(x=PC1,y=PC2,color=samples$Treatment))
+p<-ggplot(single_df,aes(x=PC1,y=PC2,color=single_df$Treatment))
 p<-p+geom_point(size=2)+
   theme(axis.title = element_text(size=14))+
   theme(axis.text=element_text(size=12))+
@@ -373,7 +354,7 @@ p<-p+geom_point(size=2)+
   theme(legend.position="bottom")+
   scale_color_manual(values=cols)+
   guides(fill = guide_legend(override.aes=list(shape=21)))+
-  facet_grid(samples$Species~samples$Timepoint)
+  facet_grid(single_df$Species~single_df$Timepoint)
 p + labs(x=xlab, y=ylab, color="Treatment") +coord_fixed()
 dev.off()
 
