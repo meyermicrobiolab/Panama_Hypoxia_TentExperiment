@@ -335,6 +335,31 @@ p<-p+geom_point(size=2)+
 p + labs(x=xlab, y=ylab, color="Treatment",shape="Coral species") +coord_fixed()
 dev.off()
 
+# test EQ theory
+# create single dataframe for plotting
+# step 1 make rownames a column for that I can merge by sample name
+samples2<-rownames_to_column(samples, var = "sample")
+df_out2<-rownames_to_column(df_out, var = "sample")
+single_df<-merge(samples2,df_out2, by="sample")
+# now replot with merged dataframes
+
+pdf("PCA_96_test.pdf",bg ="white",width = 8.5)
+p<-ggplot(single_df,aes(x=PC1,y=PC2,color=single_df$Treatment,shape=single_df$Species))
+p<-p+geom_point(size=2)+
+  theme(axis.title = element_text(size=14))+
+  theme(axis.text=element_text(size=12))+
+  theme(legend.title = element_text(size=14))+
+  theme(legend.text = element_text(size=12))+
+  theme(strip.text.x = element_text(size=12))+
+  scale_color_manual(values=cols)+
+  guides(fill = guide_legend(override.aes=list(shape=21)))+
+  facet_grid(~samples$Timepoint)
+p + labs(x=xlab, y=ylab, color="Treatment",shape="Coral species") +coord_fixed()
+dev.off()
+
+
+
+
 
 pdf("PCA_96_facet.pdf",bg ="white",width = 8.5)
 p<-ggplot(df_out,aes(x=PC1,y=PC2,color=samples$Treatment))
