@@ -1,0 +1,4 @@
+".id"	"Estimate"	"Std.Error"	"p"	"Kingdom"	"Phylum"	"Class"	"Order"	"Family"	"Genus"	"family_asv"
+"ASV7"	-6.84322874032234	1.75584234591241	0.00456131644745993	"Bacteria"	"Bacteria"	"Bacteria"	"Bacteria"	"Bacteria"	"Bacteria"	"Bacteria_(ASV7)"
+"ASV204"	2.87570319230004	0.74067792155996	0.00465811535414067	"Bacteria"	"Proteobacteria"	"Alphaproteobacteria"	"Rhizobiales"	"Stappiaceae"	"Stappiaceae"	"Stappiaceae_(ASV204)"
+"ASV360"	4.29688483234026	1.18683292042134	0.00677804368340353	"Bacteria"	"Proteobacteria"	"Gammaproteobacteria"	"Burkholderiales"	"Nitrosomonadaceae"	"IS-44"	"Nitrosomonadaceae_(ASV360)"
