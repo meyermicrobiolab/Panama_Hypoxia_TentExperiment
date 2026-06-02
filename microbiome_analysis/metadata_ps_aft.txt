@@ -1,0 +1,33 @@
+	Species	Treatment	Timepoint	Colony	Collection.date	FoFm
+tnt63	Agaricia tenuifolia	fully closed	after	1	8/12/22	0
+tnt57	Agaricia tenuifolia	partially closed	after	2	8/12/22	0.677
+tnt45	Agaricia tenuifolia	open	after	3	8/12/22	0.634
+tnt28	Agaricia tenuifolia	fully closed	after	5	8/12/22	0.663
+tnt6	Agaricia tenuifolia	partially closed	after	8	8/12/22	0.657
+tnt77	Agaricia tenuifolia	open	after	10	8/12/22	0.672
+tnt67	Agaricia tenuifolia	partially closed	after	11	8/12/22	0.642
+tnt62	Agaricia tenuifolia	fully closed	after	13	8/12/22	0.05
+tnt29	Agaricia tenuifolia	open	after	17	8/12/22	0.723
+tnt23	Agaricia tenuifolia	fully closed	after	18	8/12/22	0.18
+tnt78	Agaricia tenuifolia	open	after	21	8/12/22	0.704
+tnt79	Agaricia tenuifolia	partially closed	after	22	8/12/22	0.603
+tnt66	Agaricia tenuifolia	fully closed	after	24	8/12/22	0.65
+tnt56	Agaricia tenuifolia	open	after	26	8/12/22	0.652
+tnt40	Agaricia tenuifolia	partially closed	after	28	8/12/22	0.645
+tnt24	Agaricia tenuifolia	fully closed	after	30	8/12/22	0
+tnt33	Siderastrea siderea	fully closed	after	4	8/12/22	0.685
+tnt22	Siderastrea siderea	partially closed	after	6	8/16/22	0.694
+tnt14	Siderastrea siderea	open	after	7	8/12/22	0.727
+tnt80	Siderastrea siderea	partially closed	after	9	8/12/22	0.678
+tnt88	Siderastrea siderea	fully closed	after	12	8/6/22	0.627
+tnt53	Siderastrea siderea	open	after	14	8/13/22	0.684
+tnt54	Siderastrea siderea	partially closed	after	15	8/12/22	0.671
+tnt32	Siderastrea siderea	fully closed	after	16	8/9/22	0.638
+tnt15	Siderastrea siderea	open	after	19	8/12/22	0.616
+tnt7	Siderastrea siderea	fully closed	after	20	8/12/22	0.694
+tnt93	Siderastrea siderea	partially closed	after	23	8/6/22	0.653
+tnt85	Siderastrea siderea	open	after	25	8/6/22	0.67
+tnt41	Siderastrea siderea	fully closed	after	27	8/12/22	0.683
+tnt30	Siderastrea siderea	open	after	29	8/16/22	0.645
+tnt16	Siderastrea siderea	fully closed	after	31	8/12/22	0.639
+tnt8	Siderastrea siderea	partially closed	after	32	8/16/22	0.674

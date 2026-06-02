@@ -518,3 +518,83 @@ write.table(recovery.da.models.df, "DA_ASV_recovery-SSID.txt", sep="\t",row.name
 
 
 ```
+
+
+#### Look for DA families based on photosynthetic yield. This analysis will include 32 samples - both coral species, all treatments, after low oxygen treatment (recovery phase)
+
+
+
+```{r, echo=FALSE}
+# read in count data
+otu <- read.table("Tent_Expm_silva_nochloronomito_otu_table_ps2.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("Tent_Expm_silva_nochloronomito_taxa_table_ps2.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("Tent_Expm_metadata.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps2 <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+               sample_data(samples), 
+               tax_table(taxon))
+ps2 # 1145 taxa and 96 samples
+
+
+ps_aft = subset_samples(ps2, Timepoint == "after")
+ps_aft # 1145 taxa and 32 samples, keeping both coral species here
+ps_aft <- prune_taxa(taxa_sums(ps_aft) > 1, ps_aft) #remove taxa not found in remaining samples
+ps_aft # 1015 taxa and 32 samples
+# Now export cleaned otu and taxa tables from phyloseq for future reference
+otu = as(otu_table(ps_aft), "matrix")
+taxon = as(tax_table(ps_aft), "matrix")
+metadata = as(sample_data(ps_aft), "matrix")
+write.table(otu,"silva_nochloronomito_otu_table_ps_aft.txt",sep="\t",col.names=NA)
+write.table(taxon,"silva_nochloronomito_taxa_table_ps_aft.txt",sep="\t",col.names=NA)
+write.table(metadata,"metadata_ps_aft.txt",sep="\t",col.names=NA)
+
+##### Add FoFm (photosynthetic yield) to metadata table.
+##### In both the otu table and the taxa table, replace the ASV sequence with an ASV number
+
+otu <- read.table("silva_nochloronomito_otu_table_ps_aft.txt",sep="\t",header=TRUE, row.names=1)
+taxon <- read.table("silva_nochloronomito_taxa_table_ps_aft.txt",sep="\t",header=TRUE,row.names=1)
+samples<-read.table("metadata_ps_aft.txt",sep="\t",header=T,row.names=1)
+OTU = otu_table(otu, taxa_are_rows=FALSE)
+taxon<-as.matrix(taxon)
+TAX = tax_table(taxon)
+sampledata = sample_data(samples)
+ps_aft <- phyloseq(otu_table(otu, taxa_are_rows=FALSE), 
+                        sample_data(samples), 
+                        tax_table(taxon))
+ps_aft # 1015 taxa and 32 samples
+
+# collapse ASVs into higher taxonomic groups for DA analysis
+ps_aft_family <- ps_aft %>% phyloseq::tax_glom("Family")
+ps_aft_family # 222 families and 32 samples
+
+# What microbial families are changing in relation to photosynthetic yield?
+
+set.seed(11)
+pam.da <- differentialTest(formula = ~ FoFm, 
+                                 phi.formula = ~ FoFm,
+                                 formula_null = ~ 1,
+                                 phi.formula_null = ~ FoFm,
+                                 test = "LRT", boot = FALSE,
+                                 data = ps_aft_family,
+                                 fdr_cutoff = 0.05)
+
+
+pam.da$significant_taxa # 4 significant "taxa" - families, named by representative ASV (add full taxonomy)
+# ASV12: Prolixibacteraceae (Bacteroidia)
+# ASV31: unclassified family of Bacteria
+# ASV46: Oleiphilaceae (Gammaproteobacteria)
+# ASV146: Cellvibrionaceae (Gammaproteobacteria)
+
+#quick look at results with corncob's plotting feature
+pdf("DA_families_PhotosynYield.pdf", bg ="white",width=10)
+plot(pam.da, level="Family")
+dev.off()
+
+# only ASV31 is positively associated with photosynthetic yield, the other 3 are negatively associated: having more of this uncharacterized bacterial family is good for recovery, having less of Prolixibacteraceae, Oleiphilaceae, and Cellvibrionaceae is associated with poor recovery
+
+
+
+```
