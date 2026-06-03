@@ -593,8 +593,39 @@ pdf("DA_families_PhotosynYield.pdf", bg ="white",width=10)
 plot(pam.da, level="Family")
 dev.off()
 
-# only ASV31 is positively associated with photosynthetic yield, the other 3 are negatively associated: having more of this uncharacterized bacterial family is good for recovery, having less of Prolixibacteraceae, Oleiphilaceae, and Cellvibrionaceae is associated with poor recovery
+# only unclassified family of Bacteria is positively associated with photosynthetic yield, the other 3 families are negatively associated: having more of this uncharacterized bacterial family is good for recovery, having less of Prolixibacteraceae, Oleiphilaceae, and Cellvibrionaceae is associated with poor recovery
 
+
+
+# What ASVs are changing in relation to photosynthetic yield?
+
+set.seed(15)
+pam2.da <- differentialTest(formula = ~ FoFm, 
+                                 phi.formula = ~ FoFm,
+                                 formula_null = ~ 1,
+                                 phi.formula_null = ~ FoFm,
+                                 test = "LRT", boot = FALSE,
+                                 data = ps_aft,
+                                 fdr_cutoff = 0.05)
+
+pam2.da$significant_taxa # No significant ASVs
+
+# Test for differentially abundant ASVs only in ATEN
+ps_aft_A = subset_samples(ps_aft, Species == "Agaricia tenuifolia")
+ps_aft_A # 1015 taxa and 16 samples
+ps_aft_A <- prune_taxa(taxa_sums(ps_aft_A) > 1, ps_aft_A) #remove taxa not found in remaining samples
+ps_aft_A # 692 taxa and 16 samples
+
+set.seed(12)
+pam3.da <- differentialTest(formula = ~ FoFm, 
+                                 phi.formula = ~ FoFm,
+                                 formula_null = ~ 1,
+                                 phi.formula_null = ~ FoFm,
+                                 test = "LRT", boot = FALSE,
+                                 data = ps_aft_A,
+                                 fdr_cutoff = 0.05)
+
+pam3.da$significant_taxa # No significant ASVs
 
 
 ```
