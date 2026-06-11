@@ -1,0 +1,5 @@
+"Estimate"	"StdError"	"tvalue"	"Pr"	"asv"	"Class"	"Order"	"Family"
+-6.28743370265451	1.21391353937507	"-5.1794740718448"	"1.69802923316388e-05"	"ASV12"	"Bacteroidia"	"Bacteroidales"	"Prolixibacteraceae"
+5.75933774513217	0.592501054801918	"9.72038395283127"	"1.79331569740599e-10"	"ASV31"	"Bacteria"	"Bacteria"	"Bacteria"
+-7.23335696973866	1.57337380738737	"-4.59735438315822"	"8.3332439198282e-05"	"ASV46"	"Gammaproteobacteria"	"Pseudomonadales"	"Oleiphilaceae"
+-6.84262143688471	1.2566290214684	"-5.44521996546679"	"8.22352802618314e-06"	"ASV146"	"Gammaproteobacteria"	"Pseudomonadales"	"Cellvibrionaceae"

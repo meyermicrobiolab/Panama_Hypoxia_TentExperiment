@@ -595,6 +595,94 @@ dev.off()
 
 # only unclassified family of Bacteria is positively associated with photosynthetic yield, the other 3 families are negatively associated: having more of this uncharacterized bacterial family is good for recovery, having less of Prolixibacteraceae, Oleiphilaceae, and Cellvibrionaceae is associated with poor recovery
 
+# create a function that will return the values of interest
+
+sigtaxto_df <- function(pam.da, ps_aft_family) {
+  df.out <- c()
+  for (i in 1:length(pam.da$significant_models)) { #from 1 to the number of significant taxa
+    df.out = rbind(df.out, pam.da$significant_models[[i]]$coefficients[2, 1:4]) #bind the significant taxa with coefficient, std. error, t value, Pr. coefficients[2,] is the DA model output.
+  }
+  asv = as.vector(pam.da$significant_taxa) #get significant families
+  Class = as.vector(otu_to_taxonomy(data = ps_aft_family, pam.da$significant_taxa, level = c("Class")))
+  Order = as.vector(otu_to_taxonomy(data = ps_aft_family, pam.da$significant_taxa, level = c("Order")))
+  Family = as.vector(otu_to_taxonomy(data = ps_aft_family, pam.da$significant_taxa, level = c("Family")))
+  
+  df.bind <- as.data.frame(cbind(df.out, asv, Class, Order, Family))
+  colnames(df.bind) <- c("Estimate", "StdError", "tvalue", "Pr", "asv", "Class", "Order", "Family")
+  df.bind$Estimate = as.numeric(as.character(df.bind$Estimate)) #estimate column should be numeric 
+  df.bind$StdError = as.numeric(as.character(df.bind$StdError)) #stderror column should be numeric 
+  
+  return(df.bind)
+}
+
+df <- sigtaxto_df(pam.da, ps_aft_family) #make a df of the corncob output and the taxonomy
+
+### Save these data so you don't have to re-run the model ###
+write.table(df, "DA-Families_PAM.txt", sep="\t",row.names = FALSE)
+
+# retrieve relative abundances of significant taxa for plotting
+ps_aft_family # 222 taxa and 32 samples 
+ps_aft_family_ra<-transform_sample_counts(ps_aft_family, function(OTU) OTU/sum(OTU))
+ps_aft_family_ra # 222 taxa and 32 samples 
+otu_da = as(otu_table(ps_aft_family_ra), "matrix")
+taxon_da = as(tax_table(ps_aft_family_ra), "matrix")
+da<-t(otu_da)
+da <- as.data.frame(da)
+da <- tibble::rownames_to_column(da, "ASV")
+taxon_da <- as.data.frame(taxon_da)
+taxon_da <- tibble::rownames_to_column(taxon_da, "ASV")
+taxon_da$Species<-NULL
+taxon_da$Genus<-NULL
+taxon_da$sequence<-NULL
+da_tax <- merge(taxon_da, da, by="ASV", all=FALSE)
+
+# now to retrieve only the taxa that I want to plot
+DA1 <- da_tax %>% filter(Family =='Bacteria')
+DA2 <- da_tax %>% filter(Family =='Prolixibacteraceae')
+DA3 <- da_tax %>% filter(Family =='Oleiphilaceae')
+DA4 <- da_tax %>% filter(Family =='Cellvibrionaceae')
+DA_pam <-rbind(DA1,DA2)
+DA_pam<-rbind(DA_pam,DA3)
+DA_pam<-rbind(DA_pam,DA4)
+
+# Merge with metadata for plotting aesthetics
+samples <- as.data.frame(samples)
+samples <- tibble::rownames_to_column(samples, "sample")
+DA_long<-melt(DA_pam,value.name="proportion",variable.name="sample",id.vars=c("ASV","Kingdom","Phylum","Class","Order","Family"))
+
+DAplot <- merge(DA_long,samples,by="sample", all=TRUE)
+# reduce decimal places in proporation column
+DAplot$proportion<-round(DAplot$proportion,3)
+
+# set aesthetics
+DAplot$Treatment<-factor(DAplot$Treatment,levels=c("fully closed","partially closed","open"))
+cols2<-c("fully closed"="#D55E00","partially closed"="#0072B2","open"="#56B4E9") #colorblind friendly palette
+# families changing in relation to photosynthetic yield, sorted by DA Estimate
+DAplot$Family<-factor(DAplot$Family,levels=c("Bacteria","Prolixibacteraceae","Cellvibrionaceae","Oleiphilaceae"))
+
+pdf("DA_PAM_families.pdf",bg ="white", width=8.5)
+fams <- ggplot(DAplot, aes(x=FoFm, y=proportion,color=Treatment))+
+  geom_point(size=3)+
+  scale_color_manual(values=cols2,breaks = c("fully closed","partially closed","open"))+
+  facet_grid(Family~.)+
+  geom_smooth(method=lm,se=TRUE)+  
+  theme_bw()+
+  theme(axis.text.x=element_text(size=14))+
+  theme(strip.text.y=element_text(size=14,face="bold.italic"))+
+  theme(legend.position="right")+
+  theme(legend.title = element_text(size=14,face="bold"))+
+  theme(legend.text = element_text(size=14))
+fams
+dev.off()
+
+
+
+
+
+
+
+
+
 
 
 # What ASVs are changing in relation to photosynthetic yield?
